@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+>
+
+
+  <div th:fragment="header">
+    <header>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+      <title>Fair Hand Borrowing</title>
+      <link rel="icon" type="image/x-icon" th:src="@{Images/favicon.JPG}">
+    </header>
+
+
+      <img th:src="@{Images/favicon.JPG}"  class="ml-4 "/>
+      <div th:insert="~{Components/HeaderFooterComponents :: register-nav}"> </div>
+      <div th:insert="~{Components/HeaderFooterComponents:: top-nav}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+
+  </div>
+
+  <div th:fragment="top-nav">
+      <ul class="nav nav-pills">
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/}">Landing page</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/}">Categories</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Legal Pages</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/legal/acceptable_use_policy}">Acceptable Use Policy</a></li>
+            <li><a class="dropdown-item" th:href="@{/legal/cookies_policy}" >Cookies Policy</a></li>
+            <li><a class="dropdown-item" th:href="@{/legal/insurance_policy}" >Insurance Policy</a></li>
+            <li><a class="dropdown-item" th:href="@{/legal/disclaimer}">Disclaimer</a></li>
+            <li><a class="dropdown-item" th:href="@{/legal/privacy_policy}">Privacy Policy</a></li>
+
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" th:href="@{/legal/contact_us}">Contact Us</a></li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a class="nav-link disabled">Disabled</a>
+        </li>
+      </ul>
+
+  </div>
+
+  <div th:fragment="register-nav">
+
+    <nav class="navbar bg-body-tertiary">
+      <form class="container-fluid justify-content-start">
+        <button class="btn btn-outline-success me-2" type="button">Log in</button>
+        <button class="btn btn-outline-success me-2" type="button">Register</button>
+      </form>
+    </nav>
+
+
+  </div>
+
+
+
+  <div th:fragment="footer">
+    <p> Fair Hand Borrowing, all rights reserverd </p>
+
+  </div>
+
+
+
+</html>

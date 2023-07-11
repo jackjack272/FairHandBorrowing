@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping
-public class WorkController {
+public class LandingPageController {
 
     @GetMapping("/")
     public String here(){
-        return "here";
+        return "LandingPage";
     }
 
 }
