@@ -1,0 +1,19 @@
+We're using boot strap, copy and paste the code to make it nice
+
+https://getbootstrap.com/docs/5.3/forms/checks-radios/
+https://getbootstrap.com/docs/4.0/utilities/spacing/
+
+
+
+I cant figure out how to link css to imbeded folder like Loan/Collateral.html so
+    im using indocument styling
+
+    if some one can figure this one we can extract the indocument style.
+
+
+--Document Standard
+    Documents Start Wtih Capital Letter
+
+--variable Standard
+    were going to be using: camelCase
+
