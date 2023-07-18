@@ -9,9 +9,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping
 public class LandingPageController {
 
-    @GetMapping("/")
-    public String here(){
-        return "LandingPage";
-    }
 
 }

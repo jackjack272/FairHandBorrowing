@@ -8,4 +8,8 @@ public interface UserService {
 
     UserEntity findByEmail(String email);
     UserEntity findByUserName(String userName);
+
+
+    // validate log in
+    Boolean validateEmailWithPassword(String email, String password);
 }

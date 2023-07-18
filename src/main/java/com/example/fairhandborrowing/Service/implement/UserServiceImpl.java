@@ -16,6 +16,7 @@ public class UserServiceImpl implements UserService {
 
     private final static String USER_ROLE = "USER";
 
+
     @Autowired
     private UserRepository userRepository;
 
@@ -44,5 +45,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity findByUserName(String userName) {
         return userRepository.findByUserName(userName);
+    }
+
+    @Override
+    public Boolean validateEmailWithPassword(String email, String password) {
+        if( userRepository.findByEmail(email).getPassword().equals(password)){
+            return true;
+        }else {
+            return false;
+        }
     }
 }
