@@ -1,11 +1,9 @@
 package com.example.fairhandborrowing.Controller;
 
 import com.example.fairhandborrowing.DTO.UserRegistrationDto;
-import com.example.fairhandborrowing.Model.UserEntity;
 import com.example.fairhandborrowing.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -21,11 +19,8 @@ import java.security.Principal;
 @Controller
 @RequestMapping
 public class RegistrationController {
-//    https://www.baeldung.com/get-user-in-spring-security
+    //    https://www.baeldung.com/get-user-in-spring-security
 //    https://stackoverflow.com/questions/61167576/securitycontextholder-import-not-working-in-spring-boot-application
-
-    Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-
     private UserService userService;
 
     @Autowired
@@ -42,11 +37,11 @@ public class RegistrationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-//            model.addAttribute("user",username);
+            model.addAttribute("user",username);
         }
         ;
-        model.addAttribute("user",
-                userService.findByUserName(principal.getName()).getFirstName() );
+//        model.addAttribute("user",
+//                userService.findByUserName(principal.getName()).getFirstName() );
         // these are both the ways to get the user.
             //Authentication and Principal
 
@@ -56,12 +51,47 @@ public class RegistrationController {
     //create the account generation form
     @GetMapping("/profile")
     public String profileSetup(Model model, Principal principal){
-        model.addAttribute("user", userService.findByUserName(principal.getName()));
+
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            model.addAttribute("user_obj",userService.findByUserName(username));
+            // good /bad standing
+        }
 
         return "Registration/Profile";
     }
 
+
     //todo:registration
+    @GetMapping("/register")
+    public String getRegistrationPage(Model model){
+        model.addAttribute("user",new UserRegistrationDto());
+        return "Registration/RegisterPage";
+    }
+
+    @PostMapping("/register")
+    public String saveUser(Model model,
+            @ModelAttribute("UserRegistrationDto")UserRegistrationDto dto ) {
+        try{
+            userService.saveUser(dto);
+            return "redirect:/";
+        }catch (Exception e){
+            model.addAttribute("user",dto);
+            model.addAttribute("failed",e.getMessage());
+            model.addAttribute("here","failed to send ");
+            return "Registration/RegisterPage";
+//            return "worked";
+
+        }
+
+//        return "worked";
+    };
+
+
+
+
 
     @GetMapping("/login")
     public String login(Model model){

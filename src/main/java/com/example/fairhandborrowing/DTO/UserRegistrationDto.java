@@ -13,6 +13,7 @@ import java.util.Date;
 @ToString
 public class UserRegistrationDto {
 
+    private Long userId;
     @NotEmpty
     private String userName;
     @NotEmpty

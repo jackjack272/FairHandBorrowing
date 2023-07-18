@@ -3,8 +3,6 @@ We're using boot strap, copy and paste the code to make it nice
 https://getbootstrap.com/docs/5.3/forms/checks-radios/
 https://getbootstrap.com/docs/4.0/utilities/spacing/
 
-
-
 I cant figure out how to link css to imbeded folder like Loan/Collateral.html so
     im using indocument styling
 
@@ -17,3 +15,6 @@ I cant figure out how to link css to imbeded folder like Loan/Collateral.html so
 --variable Standard
     were going to be using: camelCase
 
+
+to get me working need to have a user in DB with username user
+--------------------------------------------------

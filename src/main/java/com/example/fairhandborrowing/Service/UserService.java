@@ -4,10 +4,10 @@ import com.example.fairhandborrowing.DTO.UserRegistrationDto;
 import com.example.fairhandborrowing.Model.UserEntity;
 
 public interface UserService {
-    void saveUser(UserRegistrationDto registrationDto);
+    void saveUser(UserRegistrationDto registrationDto)throws  Exception ;
 
-    UserEntity findByEmail(String email);
-    UserEntity findByUserName(String userName);
+    UserRegistrationDto findByEmail(String email) ;
+    UserRegistrationDto findByUserName(String userName);
 
 
     // validate log in
