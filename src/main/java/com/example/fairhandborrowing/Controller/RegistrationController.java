@@ -31,6 +31,8 @@ public class RegistrationController {
 
 
     //just ask chat gpt f google thats for the boomers.
+
+    //todo: landing page
     @GetMapping("/")
     public String landingPage(Principal principal, Model model){
         // Inside a method or class where you need the authenticated user
@@ -48,20 +50,31 @@ public class RegistrationController {
         return "LandingPage";
     }
 
+
+    //todo:edit profile
     //create the account generation form
     @GetMapping("/profile")
-    public String profileSetup(Model model, Principal principal){
-
+    public String showProfile(Model model, Principal principal){
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             model.addAttribute("user_obj",userService.findByUserName(username));
             // good /bad standing
         }
-
         return "Registration/Profile";
     }
+
+    @GetMapping("/profileform")
+    public String makeProfile(){
+
+
+        return "Registration/Profile";
+
+    }
+
+
+
+
 
 
     //todo:registration
@@ -81,13 +94,10 @@ public class RegistrationController {
             model.addAttribute("user",dto);
             model.addAttribute("failed",e.getMessage());
             model.addAttribute("here","failed to send ");
-            return "Registration/RegisterPage";
-//            return "worked";
-
+            return "Registration/profileSetUp";
         }
-
-//        return "worked";
     };
+
 
 
 

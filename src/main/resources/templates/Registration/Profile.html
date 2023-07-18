@@ -27,12 +27,8 @@
         <button type="button" class="btn btn-secondary">Deal with Money</button>
     </div>
 
-    <div id="profpic">
-        <img th:src="@{/Images/person.JPG}" >
-        <p> i am the profile picture </p>
-        <h4> Credit Score: <p >750 </p> </h4>
-        <p>Profile info</p>
-    </div>
+    <div th:replace="~{/Components/ProfileComponents ::top}"> </div>
+
 
     <button type="button" class="btn btn-warning" th:onclick="">New Loan Form</button>
 </div>
