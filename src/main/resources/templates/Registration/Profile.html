@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="~{Components/HeaderFooterComponents:: header}"></div>
+
+<h1> <p th:text="${user.getFirstName()}"></p> tell us about your self </h1>
+  <form method="post" th:object="${user}">
+    <input type="text" >
+
+
+  </form>
+
+
+
+
+
+<div th:insert="~{Components/HeaderFooterComponents:: footer}"></div>
+</body>
+</html>

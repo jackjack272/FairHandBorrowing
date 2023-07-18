@@ -33,23 +33,33 @@ public class RegistrationController {
         this.userService = userService;
     }
 
+
+
     //just ask chat gpt f google thats for the boomers.
     @GetMapping("/")
     public String landingPage(Principal principal, Model model){
         // Inside a method or class where you need the authenticated user
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
 //            model.addAttribute("user",username);
-
         }
-        model.addAttribute("user",principal.getName());
-
+        ;
+        model.addAttribute("user",
+                userService.findByUserName(principal.getName()).getFirstName() );
+        // these are both the ways to get the user.
+            //Authentication and Principal
 
         return "LandingPage";
     }
 
+    //create the account generation form
+    @GetMapping("/profile")
+    public String profileSetup(Model model, Principal principal){
+        model.addAttribute("user", userService.findByUserName(principal.getName()));
+
+        return "Registration/Profile";
+    }
 
     //todo:registration
 
