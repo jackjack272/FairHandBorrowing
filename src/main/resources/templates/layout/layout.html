@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org"
+>
+<head th:fragment="header">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=n">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Fair Hand Borrowing</title>
+</head>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container px-5">
+        <a class="navbar-brand" th:href="@{/static}">Fair Hand Borrowing</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" th:href="@{/static}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/static}">Categories</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/register}">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<body layout:fragment="body" class="min-vh-75"></body>
+<footer class="bg-dark text-center text-white" th:fragment="footer">
+    <!-- Grid container -->
+    <div class="container p-4 pb-0">
+        <!-- Section: Social media -->
+        <section class="mb-4">
+            <a class="btn btn-dark btn-floating m-1" th:href="@{/legal/acceptable_use_policy}" role="button">Acceptable Use Policy</a>
+            <a class="btn btn-dark btn-floating m-1" th:href="@{/legal/cookies_policy}" role="button">Cookies Policy</a>
+            <a class="btn btn-dark btn-floating m-1" th:href="@{/legal/insurance_policy}" role="button">Insurance Policy</a>
+            <a class="btn btn-dark btn-floating m-1" th:href="@{/legal/disclaimer}" role="button">Disclaimer</a>
+            <a class="btn btn-dark btn-floating m-1" th:href="@{/legal/privacy_policy}" role="button">Privacy Policy</a>
+            <a class="btn btn-dark btn-floating m-1" th:href="@{/legal/contact_us}" role="button">Contact Us</a>
+
+        </section>
+        <!-- Section: Social media -->
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2023 Copyright: Fair Hand Borrowing.
+    </div>
+    <!-- Copyright -->
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</html>

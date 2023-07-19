@@ -7,9 +7,11 @@ import com.example.fairhandborrowing.Repository.RoleRepository;
 import com.example.fairhandborrowing.Repository.UserRepository;
 import com.example.fairhandborrowing.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,60 +25,41 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
-    public void saveUser(UserRegistrationDto registrationDto)
-            throws  Exception {
+    public Optional<UserRegistrationDto> saveUser(UserRegistrationDto registrationDto) {
 
+        UserEntity user = new UserEntity();
+        user.setUserName(registrationDto.getUserName());
+        user.setEmail(registrationDto.getEmail());
+        user.setFirstName(registrationDto.getFirstName());
+        user.setLastName(registrationDto.getLastName());
+        user.setDob(registrationDto.getDob());
+        user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        Role role = roleRepository.findByName(USER_ROLE);
 
-        // validate the username is availabe
-        if(this.findByUserName(registrationDto.getUserName()) !=null){
-            throw new Exception("user name taken");
-        } else if (this.findByEmail(registrationDto.getEmail()) !=null) {
-            throw new Exception("email taken");
-        } else if (registrationDto.getPassword().length() <2) {
-            throw new Exception("password too short");
+        user.setRoles(Arrays.asList(role));
 
-        } else{
-            UserEntity user = new UserEntity();
-
-            // how do i set the ID here?
-
-//            user.setUserId(userRepository.find);
-
-            user.setUserName(registrationDto.getUserName());
-            user.setEmail(registrationDto.getEmail());
-            user.setFirstName(registrationDto.getFirstName());
-            user.setLastName(registrationDto.getLastName());
-            user.setDob(registrationDto.getDob());
-
-            Role role = roleRepository.findByName(USER_ROLE);
-
-            user.setRoles(Arrays.asList(role));
-            userRepository.save(user);
-        }
+        UserEntity savedUser = userRepository.save(user);
+        Optional<UserRegistrationDto> dto = Optional.of(mapToDto(savedUser));
+        return dto;
 
     }
 
     @Override
     public UserRegistrationDto findByEmail(String email) {
-        return mapToDto( userRepository.findByEmail(email));
+        Optional<UserEntity> user = userRepository.findByEmail(email);
+        return user.isPresent() ? mapToDto(user.get()) : null;
     }
 
     @Override
     public UserRegistrationDto findByUserName(String userName) {
-        return mapToDto(userRepository.findByUserName(userName));
+        Optional<UserEntity> user = userRepository.findByUserName(userName);
+
+        return user.isPresent() ? mapToDto(user.get()) : null;
     }
-
-
-    @Override
-    public Boolean validateEmailWithPassword(String email, String password) {
-        if( userRepository.findByEmail(email).getPassword().equals(password)){
-            return true;
-        }else {
-            return false;
-        }
-    }
-
 
     private UserEntity mapToModel(UserRegistrationDto user){
         //when regestering the user wont have an id until its in the db
@@ -95,7 +78,6 @@ public class UserServiceImpl implements UserService {
     private UserRegistrationDto mapToDto(UserEntity user){
 
         UserRegistrationDto userDto= UserRegistrationDto.builder()
-                .userId(user.getUserId())
                 .userName(user.getUserName())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())

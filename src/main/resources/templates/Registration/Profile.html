@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -15,7 +17,7 @@
 </style>
 
 </head>
-<body>
+<section layout:fragment="body">
 <div th:insert="~{Components/HeaderFooterComponents:: header}"></div>
 
 <h1> Profile </h1>
@@ -74,5 +76,5 @@
 </div>
 
 <div th:insert="~{Components/HeaderFooterComponents:: footer}"></div>
-</body>
+</section>
 </html>

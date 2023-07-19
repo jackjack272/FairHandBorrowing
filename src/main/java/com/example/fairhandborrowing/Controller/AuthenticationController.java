@@ -2,6 +2,8 @@ package com.example.fairhandborrowing.Controller;
 
 import com.example.fairhandborrowing.DTO.UserRegistrationDto;
 import com.example.fairhandborrowing.Service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.Authentication;
@@ -15,41 +17,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 @RequestMapping
-public class RegistrationController {
+public class AuthenticationController {
     //    https://www.baeldung.com/get-user-in-spring-security
 //    https://stackoverflow.com/questions/61167576/securitycontextholder-import-not-working-in-spring-boot-application
-    private UserService userService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
-    public RegistrationController(UserService userService) {
-        this.userService = userService;
-    }
-
-
-
-    //just ask chat gpt f google thats for the boomers.
-
-    //todo: landing page
-    @GetMapping("/")
-    public String landingPage(Principal principal, Model model){
-        // Inside a method or class where you need the authenticated user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            model.addAttribute("user",username);
-        }
-        ;
-//        model.addAttribute("user",
-//                userService.findByUserName(principal.getName()).getFirstName() );
-        // these are both the ways to get the user.
-            //Authentication and Principal
-
-        return "LandingPage";
-    }
-
+    private UserService userService;
 
     //todo:edit profile
     //create the account generation form
@@ -73,60 +51,40 @@ public class RegistrationController {
     }
 
 
-
-
-
-
     //todo:registration
     @GetMapping("/register")
     public String getRegistrationPage(Model model){
         model.addAttribute("user",new UserRegistrationDto());
-        return "Registration/RegisterPage";
+        return "Registration/Register";
     }
 
     @PostMapping("/register")
     public String saveUser(Model model,
             @ModelAttribute("UserRegistrationDto")UserRegistrationDto dto ) {
-        try{
-            userService.saveUser(dto);
-            return "redirect:/";
-        }catch (Exception e){
+
+            LOGGER.info("Registration DTO: " + dto);
+
+            if (userService.findByUserName(dto.getUserName()) != null) {
+                model.addAttribute("failed","username already taken.");
+            } else if (userService.findByEmail(dto.getUserName()) != null) {
+                model.addAttribute("failed", "email already taken.");
+            }
+
+            Optional<UserRegistrationDto> user = userService.saveUser(dto);
+
+            if(user.isPresent()) {
+                LOGGER.info("Registration success: " + user.get().getUserName());
+                return "redirect:/login";
+            }
+
             model.addAttribute("user",dto);
-            model.addAttribute("failed",e.getMessage());
-            model.addAttribute("here","failed to send ");
-            return "Registration/profileSetUp";
-        }
-    };
-
-
-
-
-
+            return "redirect:/login";
+    }
 
     @GetMapping("/login")
     public String login(Model model){
         model.addAttribute("user",new UserRegistrationDto());
         return "Registration/Login";
     }
-
-
-    @PostMapping("/login")
-    public String logMeIN(Model model,
-            @ModelAttribute("UserRegistrationDto") UserRegistrationDto dto ){
-
-        model.addAttribute("email",dto.getEmail());
-        model.addAttribute("password",dto.getPassword());
-        // validate the password matches the email.
-
-        if( userService.validateEmailWithPassword(dto.getEmail(), dto.getPassword())){
-            return "worked";// send to landing page
-        }else{
-            return "redirect:/login";
-        }
-
-    }
-
-
-
 
 }
