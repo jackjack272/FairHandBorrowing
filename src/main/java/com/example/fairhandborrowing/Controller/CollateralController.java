@@ -17,22 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class CollateralController {
 
-    private CollateralService service;
-
     @Autowired
-    public CollateralController(CollateralService service) {
-        this.service = service;
-    }
-
-
-
-    @GetMapping("/collateral")
-    public String showCollateral(Model model){
-        model.addAttribute("all", service.findAllCollateral());
-        model.addAttribute("collateral",new CollateralDto());
-
-        return "Loan/Collateral";
-    }
+    private CollateralService collateralService;
 
     @PostMapping("/collateral/add")
     public String addCollateral(@Valid @ModelAttribute("CollateralDto") CollateralDto collateralDto,
@@ -41,10 +27,11 @@ public class CollateralController {
 //            return "redirect:/collateral";
 //        }
 
-        service.addNewCollateral(collateralDto);
+        collateralService.addNewCollateral(collateralDto);
 
         return "redirect:/collateral";
     }
+
 
 
 }

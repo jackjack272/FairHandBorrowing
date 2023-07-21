@@ -8,13 +8,16 @@
     <title>Register</title>
 </head>
 <section layout:fragment="body">
-    <div class="main position-relative">
-        <div class="position-absolute top-50 start-50 translate-middle-x">
+    <div class="main">
+        <div th:if="${param.fail}" class="alert alert-danger">
+            Username or email already exists
+        </div>
+        <div class="main d-flex justify-content-center my-5">
             <form
                     th:object="${user}"
                     th:action="@{/register}"
                     method="post"
-                    class="row g-2 needs-validation ml-4"  novalidate >
+                    class="row needs-validation ml-4"  novalidate >
 
                 <div class="col-md-4">
                     <label for="validationCustom01" class="form-label">First name</label>
@@ -47,7 +50,7 @@
                 <div class="col-md-4">
                     <label for="validationCustomUsername" class="form-label">Username</label>
                     <div class="input-group has-validation">
-                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                        <span class="input-group-text" id="">@</span>
                         <input
                                 th:field="*{userName}"
                                 th:value="${user.getUserName() == null ? '': user.getUserName()}"
@@ -58,7 +61,18 @@
                 </div>
 
                 <div class="col-md-4">
-                    <label for="floatingInput">Email address</label>
+                    <label for="userTypeSelect" class="form-label">User Type</label>
+                        <select
+                                th:field="*{profileType}"
+                                th:value="${user.getProfileType()}"
+                                class="form-control dropdown-toggle" id="userTypeSelect">
+                            <option th:each="profile : ${profileTypes}" th:value="${profile}" th:text="${profile}"></option>
+                        </select>
+                        <div class="valid-feedback"></div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="floatingInput" class="form-label">Email address</label>
                     <input
                             th:field="*{email}"
                             th:value="${user.getEmail() == null ? '': user.getEmail()}"

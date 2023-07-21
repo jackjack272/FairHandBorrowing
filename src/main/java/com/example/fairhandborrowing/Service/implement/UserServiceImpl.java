@@ -3,6 +3,7 @@ package com.example.fairhandborrowing.Service.implement;
 import com.example.fairhandborrowing.DTO.UserRegistrationDto;
 import com.example.fairhandborrowing.Model.Role;
 import com.example.fairhandborrowing.Model.UserEntity;
+import com.example.fairhandborrowing.Repository.ProfileTypeRepository;
 import com.example.fairhandborrowing.Repository.RoleRepository;
 import com.example.fairhandborrowing.Repository.UserRepository;
 import com.example.fairhandborrowing.Service.UserService;
@@ -26,18 +27,15 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
 
     @Autowired
+    private ProfileTypeRepository profileTypeRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<UserRegistrationDto> saveUser(UserRegistrationDto registrationDto) {
 
-        UserEntity user = new UserEntity();
-        user.setUserName(registrationDto.getUserName());
-        user.setEmail(registrationDto.getEmail());
-        user.setFirstName(registrationDto.getFirstName());
-        user.setLastName(registrationDto.getLastName());
-        user.setDob(registrationDto.getDob());
-        user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        UserEntity user = mapToModel(registrationDto);
         Role role = roleRepository.findByName(USER_ROLE);
 
         user.setRoles(Arrays.asList(role));
@@ -56,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRegistrationDto findByUserName(String userName) {
-        Optional<UserEntity> user = userRepository.findByUserName(userName);
+        Optional<UserEntity> user = userRepository.findByUsername(userName);
 
         return user.isPresent() ? mapToDto(user.get()) : null;
     }
@@ -64,13 +62,13 @@ public class UserServiceImpl implements UserService {
     private UserEntity mapToModel(UserRegistrationDto user){
         //when regestering the user wont have an id until its in the db
         UserEntity userEntity= UserEntity.builder()
-//                .userId(user.getUserId())
-                .userName(user.getUserName())
+                .username(user.getUserName())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
-                .password(user.getPassword())
+                .password(passwordEncoder.encode(user.getPassword()))
                 .dob(user.getDob())
+                .profileType(profileTypeRepository.findProfileTypeByTypeName(user.getProfileType()))
                 .build();
         return userEntity;
     }
@@ -78,12 +76,13 @@ public class UserServiceImpl implements UserService {
     private UserRegistrationDto mapToDto(UserEntity user){
 
         UserRegistrationDto userDto= UserRegistrationDto.builder()
-                .userName(user.getUserName())
+                .id(user.getUserId())
+                .userName(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .dob(user.getDob())
+                .profileType(user.getProfileType().getTypeName())
                 .build();
 
         return userDto;

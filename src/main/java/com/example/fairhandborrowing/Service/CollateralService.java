@@ -5,7 +5,7 @@ import com.example.fairhandborrowing.DTO.CollateralDto;
 import java.util.List;
 
 public interface CollateralService {
-    List<CollateralDto> findAllCollateral();
+    List<CollateralDto> findAllCollaterals();
 
     CollateralDto findOneCollateral(long id);
 

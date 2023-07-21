@@ -24,14 +24,14 @@ public class CollateralDto {
 
     @NotEmpty(message = "item condition cant be empty")
     @NotNull
-    private String Condition;
+    private String condition;
 
     @NotEmpty(message = "item description cant be empty")
     @NotNull
-    private String decription;
+    private String description;
 
     @NotEmpty(message = "item value cant be empty")
     @NotNull
     private Double marketValue;
-
 }
+

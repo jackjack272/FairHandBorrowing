@@ -19,7 +19,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long userId;
-    private String userName;
+    private String username;
     private String firstName;
     private String lastName;
     private String email;
@@ -31,4 +31,12 @@ public class UserEntity {
     joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "userId")},
     inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_type", referencedColumnName = "id")
+    private ProfileType profileType;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "loans", referencedColumnName = "userId")
+    private List<Loan> loans = new ArrayList<>();
 }

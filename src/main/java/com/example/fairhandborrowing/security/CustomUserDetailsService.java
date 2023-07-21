@@ -2,7 +2,6 @@ package com.example.fairhandborrowing.security;
 
 import com.example.fairhandborrowing.Model.UserEntity;
 import com.example.fairhandborrowing.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,11 +23,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> user = userRepository.findByUserName(username);
+        Optional<UserEntity> user = userRepository.findByUsername(username);
 
         if(user.isPresent()) {
             User authUser = new User (
-                    user.get().getEmail(),
+                    user.get().getUsername(),
                     user.get().getPassword(),
                     user.get().getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList())
             );

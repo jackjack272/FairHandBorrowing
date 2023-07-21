@@ -21,7 +21,7 @@ public class LoanController {
     @GetMapping("/loan")
     public String getLoanPage(Model model){
         model.addAttribute("collateral", new CollateralDto() );
-        model.addAttribute("collateralList",collateralService.findAllCollateral());
+        model.addAttribute("collateralList",collateralService.findAllCollaterals());
 
         return "Loan/Loan";
     }

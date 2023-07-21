@@ -1,5 +1,6 @@
 package com.example.fairhandborrowing.DTO;
 
+import com.example.fairhandborrowing.Model.ProfileType;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,6 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 public class UserRegistrationDto {
+
+    private Long id;
 
     @NotEmpty
     private String userName;
@@ -26,4 +29,7 @@ public class UserRegistrationDto {
     @NotEmpty
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dob;
+
+    @NotEmpty
+    private String profileType ;
 }

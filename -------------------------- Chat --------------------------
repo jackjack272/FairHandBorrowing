@@ -8,6 +8,13 @@
     - Also I suggest the validation to be in controller , not in the service itself, so we can bounce it back to the Frontend and show it to the user easily compared to catching throws deeper in the calls.
     - Implemented login and registration. Fixed the layouts
     - TODO:
-        - login error handliong
         - registration error handling
-        - delete HeaderFooterComponents, LandingPage, DevComponents
+        - delete HeaderFooterComponents, DevComponents
+
+- Mia 7/19:
+    - Fixed issue for the login.
+    - Created home page for borrower
+    - Created models for Loans and Collaterals
+    - TODO:
+        - Add UI components in the borrower dashboard
+        - Add more CRUD for Loans and Collaterals
