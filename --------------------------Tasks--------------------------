@@ -8,6 +8,13 @@
         - profile
         - money account
 
+    //Borrower Dashboard
+      - to view available collaterals
+      - to view active loans
+
+    //Lender Dashboard
+      - to display list of active lending
+
 
 
     // Loan
