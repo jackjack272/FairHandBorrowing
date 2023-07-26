@@ -6,10 +6,7 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Data
-
 @Builder
 public class CollateralDto {
 

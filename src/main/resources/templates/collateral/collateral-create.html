@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+  <meta charset="UTF-8">
+  <title>Collateral Create</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+  <section layout:fragment="body" class="py-5">
+    <div class="container">
+      <form role="form" method="post" th:action="@{/collateral/{userName}/new(userName=${userName})}" th:object="${collateral}">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="brand">Brand</label>
+            <input
+                    type="text"
+                    class="form-control"
+                    id="brand"
+                    name="brand"
+                    th:field="*{brand}"
+                    placehold="Brand name">
+            <p th:if="${#fields.hasErrors('brand')}" class="text-danger" th:errors="*{brand}"></p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="itemName">Item name</label>
+            <input
+                    type="text"
+                    class="form-control"
+                    id="itemName"
+                    name="itemName"
+                    th:field="*{itemName}"
+                    placehold="Item name">
+            <p th:if="${#fields.hasErrors('itemName')}" class="text-danger" th:errors="*{itemName}"></p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="condition">Condition</label>
+            <select
+                    type="text"
+                    class="form-control"
+                    id="condition"
+                    name="condition"
+                    th:field="*{condition}"
+                    placehold="Brand name">
+                    <option th:value="NEW" th:text="NEW"></option>
+                    <option th:value="USED" th:text="USED"></option>
+            </select>
+            <p th:if="${#fields.hasErrors('condition')}" class="text-danger" th:errors="*{condition}"></p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="description">Description</label>
+            <input
+                    type="text"
+                    class="form-control"
+                    id="description"
+                    name="description"
+                    th:field="*{description}"
+                    placehold="Description">
+            <p th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="marketValue">Market Value</label>
+            <span class="input-group-text">$</span>
+            <input
+                    type="text"
+                    class="form-control"
+                    id="marketValue"
+                    name="marketValue"
+                    th:field="*{marketValue}"
+                    placehold="Market Value">
+            <span class="input-group-text">.00</span>
+            <p th:if="${#fields.hasErrors('marketValue')}" class="text-danger" th:errors="*{marketValue}"></p>
+          </div>
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+</body>
+</html>

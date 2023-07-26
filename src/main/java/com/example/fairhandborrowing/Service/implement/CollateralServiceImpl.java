@@ -2,12 +2,15 @@ package com.example.fairhandborrowing.Service.implement;
 
 import com.example.fairhandborrowing.DTO.CollateralDto;
 import com.example.fairhandborrowing.Model.Collateral;
+import com.example.fairhandborrowing.Model.UserEntity;
 import com.example.fairhandborrowing.Repository.CollateralRepository;
+import com.example.fairhandborrowing.Repository.UserRepository;
 import com.example.fairhandborrowing.Service.CollateralService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,6 +18,9 @@ public class CollateralServiceImpl implements CollateralService {
 
     @Autowired
     private CollateralRepository collateralRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<CollateralDto> findAllCollaterals() {
@@ -40,8 +46,14 @@ public class CollateralServiceImpl implements CollateralService {
     }
 
     @Override
-    public void addNewCollateral(CollateralDto collateralDto) {
-        collateralRepository.save(mapToModel(collateralDto));
+    public CollateralDto  createCollateral(String userName, CollateralDto collateralDto) {
+        UserEntity user = userRepository.findFirstByUsername(userName);
+        Collateral collateral = mapToModel(collateralDto);
+        collateral.setInUse(false);
+        collateral.setOwnedBy(user);
+
+        Collateral collateralResult = collateralRepository.save(collateral);
+        return mapToDto(collateralResult);
     }
 
     private Collateral mapToModel(CollateralDto collateralDto){

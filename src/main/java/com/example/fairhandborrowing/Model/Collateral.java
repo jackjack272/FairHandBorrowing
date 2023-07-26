@@ -22,7 +22,6 @@ public class Collateral {
     private long id;
     private String itemName;
     private String brand;
-
     private String itemCondition;
     private String description;
     private Double marketValue;

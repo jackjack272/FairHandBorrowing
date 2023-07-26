@@ -1,8 +1,10 @@
 package com.example.fairhandborrowing.Service;
 
 import com.example.fairhandborrowing.DTO.CollateralDto;
+import com.example.fairhandborrowing.Model.UserEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CollateralService {
     List<CollateralDto> findAllCollaterals();
@@ -11,8 +13,7 @@ public interface CollateralService {
 
     void deleteCollateral(long id);
 
-    void addNewCollateral(CollateralDto collateralDto); // assume new item is not in use: mapToMode = .inUse(false)
-
+    CollateralDto createCollateral(String userName, CollateralDto collateralDto);
 
 
 }
