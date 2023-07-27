@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+    <meta charset="UTF-8">
+    <title>Loan Create</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <section layout:fragment="body" class="py-5">
+        <div class="container">
+            <form role="form" method="post" th:action="@{/loan/{userName}/new(userName=${userName})}" th:object="${loan}">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="amount">Amount</label>
+                        <input
+                                type="number"
+                                class="form-control"
+                                id="amount"
+                                name="amount"
+                                th:field="*{amountBorrowed}"
+                                placehold="Amount">
+                        <p th:if="${#fields.hasErrors('amountBorrowed')}" class="text-danger" th:errors="*{amountBorrowed}"></p>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="interest">Interest Rate</label>
+                        <input
+                                type="number"
+                                class="form-control"
+                                id="interest"
+                                name="interest"
+                                th:field="*{interestRate}"
+                                placehold="Interest">
+                        <p th:if="${#fields.hasErrors('interestRate')}" class="text-danger" th:errors="*{interestRate}"></p>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="endDate">End Date</label>
+                        <input
+                                type="date"
+                                class="form-control"
+                                id="endDate"
+                                name="endDate"
+                                th:field="*{expectedEndDate}"
+                                placehold="End Date">
+                        <p th:if="${#fields.hasErrors('expectedEndDate')}" class="text-danger" th:errors="*{expectedEndDate}"></p>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="collaterals">Available Collaterals</label>
+                        <select
+                                type="text"
+                                class="form-control"
+                                id="collaterals"
+                                name="collaterals"
+                                th:field="*{collaterals}"
+                                multiple="multiple">
+                            <option type="checkbox" th:each="collateral  : ${collaterals}" th:value="${collateral.getId()}" th:valuetype="com.example.fairhandborrowing.DTO.CollateralDto" th:text="${collateral.getBrand() + collateral.getItemName()}"></option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('collaterals')}" class="text-danger" th:errors="*{collaterals}"></p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

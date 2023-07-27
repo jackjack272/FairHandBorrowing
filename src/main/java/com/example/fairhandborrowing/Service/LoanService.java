@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface LoanService {
     List<LoanDto> getAllLoansByUserId(Long userId);
+
+    LoanDto createLoan(String userName, LoanDto loanDto);
 }

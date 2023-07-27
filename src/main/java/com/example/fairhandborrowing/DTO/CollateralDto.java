@@ -30,5 +30,7 @@ public class CollateralDto {
     @NotEmpty(message = "item value cant be empty")
     @NotNull
     private Double marketValue;
+
+    private UserRegistrationDto userRegistrationDto;
 }
 

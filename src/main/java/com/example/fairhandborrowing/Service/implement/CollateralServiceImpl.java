@@ -6,12 +6,14 @@ import com.example.fairhandborrowing.Model.UserEntity;
 import com.example.fairhandborrowing.Repository.CollateralRepository;
 import com.example.fairhandborrowing.Repository.UserRepository;
 import com.example.fairhandborrowing.Service.CollateralService;
+import com.example.fairhandborrowing.mapper.CollateralMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.example.fairhandborrowing.mapper.CollateralMapper.mapToModel;
 
 @Service
 public class CollateralServiceImpl implements CollateralService {
@@ -28,16 +30,24 @@ public class CollateralServiceImpl implements CollateralService {
 
         return collateral.stream().map(
             oneItem-> {
-                CollateralDto dto = mapToDto(oneItem);
-                dto.setInUse(false);
+                CollateralDto dto = CollateralMapper.mapToDto(oneItem);
                 return dto;
             }
         ).collect(Collectors.toList());
     }
 
     @Override
+    public List<CollateralDto> findAllCollateralsByUsername(String userName) {
+        UserEntity user = userRepository.findFirstByUsername(userName);
+
+        List<Collateral> collaterals = collateralRepository.findCollateralByOwnedBy(user);
+
+        return collaterals.stream().map(collateral -> CollateralMapper.mapToDto(collateral)).collect(Collectors.toList());
+    }
+
+    @Override
     public CollateralDto findOneCollateral(long id) {
-        return mapToDto(collateralRepository.findById(id).get());
+        return CollateralMapper.mapToDto(collateralRepository.findById(id).get());
     }
 
     @Override
@@ -48,36 +58,13 @@ public class CollateralServiceImpl implements CollateralService {
     @Override
     public CollateralDto  createCollateral(String userName, CollateralDto collateralDto) {
         UserEntity user = userRepository.findFirstByUsername(userName);
-        Collateral collateral = mapToModel(collateralDto);
+        Collateral collateral = CollateralMapper.mapToModel(collateralDto);
         collateral.setInUse(false);
         collateral.setOwnedBy(user);
 
         Collateral collateralResult = collateralRepository.save(collateral);
-        return mapToDto(collateralResult);
+        return CollateralMapper.mapToDto(collateralResult);
     }
 
-    private Collateral mapToModel(CollateralDto collateralDto){
-        Collateral model = Collateral.builder()
-            .brand(collateralDto.getBrand())
-            .itemName(collateralDto.getItemName())
-            .itemCondition(collateralDto.getCondition())
-            .description(collateralDto.getDescription())
-            .marketValue(collateralDto.getMarketValue())
-            .build();
 
-        return model;
-    }
-    private CollateralDto mapToDto(Collateral collateral){
-        CollateralDto collateralDto= CollateralDto.builder()
-            .id(collateral.getId())
-            .brand(collateral.getBrand())
-            .inUse(collateral.getInUse())
-            .itemName(collateral.getItemName())
-            .condition(collateral.getItemCondition())
-            .description(collateral.getDescription())
-            .marketValue(collateral.getMarketValue())
-        .build();
-
-        return collateralDto;
-    }
 }

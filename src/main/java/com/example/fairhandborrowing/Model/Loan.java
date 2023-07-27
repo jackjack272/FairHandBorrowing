@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,15 +25,19 @@ public class Loan {
 
     private Double interestRate;
 
-    private LocalDateTime expectedEndDate;
+    private Date expectedEndDate;
 
     @CreationTimestamp
-    private LocalDateTime createdOn;
+    private Date createdOn;
 
     @UpdateTimestamp
-    private LocalDateTime updatedOn;
+    private Date updatedOn;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user", referencedColumnName = "userId")
     private UserEntity user;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "collaterals", referencedColumnName = "id")
+    private List<Collateral> collateralList;
 }

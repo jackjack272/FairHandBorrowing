@@ -15,5 +15,6 @@ public interface CollateralService {
 
     CollateralDto createCollateral(String userName, CollateralDto collateralDto);
 
+    List<CollateralDto> findAllCollateralsByUsername(String userName);
 
 }

@@ -37,4 +37,8 @@ public class Collateral {
     @ManyToOne
     @JoinColumn(name = "owned_by", nullable = false)
     private UserEntity ownedBy;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "used_by", referencedColumnName = "id")
+    private Loan Loan;
 }
