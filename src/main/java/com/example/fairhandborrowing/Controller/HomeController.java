@@ -3,7 +3,6 @@ package com.example.fairhandborrowing.Controller;
 import com.example.fairhandborrowing.DTO.CollateralDto;
 import com.example.fairhandborrowing.DTO.LoanDto;
 import com.example.fairhandborrowing.DTO.UserRegistrationDto;
-import com.example.fairhandborrowing.Model.UserEntity;
 import com.example.fairhandborrowing.Service.CollateralService;
 import com.example.fairhandborrowing.Service.LoanService;
 import com.example.fairhandborrowing.Service.UserService;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping
@@ -54,10 +52,10 @@ public class HomeController {
             List<LoanDto> loanDtos = loanService.getAllLoansByUserId(user.getId());
             model.addAttribute("collaterals", collaterals);
             model.addAttribute("loans", loanDtos);
-            return "home/borrower";
+            return "LandingPage/LandingPage";
         }
 
-        return "home/borrower";
+        return "LandingPage/LandingPage";
     }
 
 }

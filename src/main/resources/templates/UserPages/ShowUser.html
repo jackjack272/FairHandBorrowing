@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+  <meta charset="UTF-8">
+  <title>Collateral Create</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+  <section layout:fragment="body" class="py-5">
+
+    <div>
+
+<!--      thi is the control for the edit and account history-->
+        <h3>Available funds: $<span th:text="${money}"></span></h3>
+        <h3>Interest payment : $<span th:text="${totalMonthly}"></span></h3>
+      <br>
+      <button type="button" class="btn btn-secondary">
+        <a >move money</a>
+      </button>
+      <button type="button" class="btn btn-secondary">
+        <a >Account history</a>
+      </button>
+    </div>
+
+    <div>
+      <img th:src="@{Images/person.JPG}"  class="ml-4 "/>
+        <br>
+        <span th:text="${user.firstName}"></span>
+      <span th:text="${user.lastName}"></span>
+    <br/>
+      <span th:if="${bio == null ? 'bio is empty 1':'my bio is empty'}"></span>
+
+
+        <br />
+      <button type="button" class="btn btn-success">
+        <a >set up a profile</a>
+      </button>
+    </div>
+
+
+      <br>
+      <br>
+      <br>
+
+<div>
+    <h4>outstanding loans</h4>
+
+    <table class="table" th:object="${loans}">
+        <thead>
+        <tr>
+            <th scope="col">loan amount</th>
+            <th scope="col">interest rate</th>
+            <th scope="col">monthly interest payment</th>
+            <th scope="col">expected end date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="loan:${loans}">
+            <td th:text="${loan.getAmountBorrowed()}"></td>
+            <td th:text="${loan.getInterestRate()}"></td>
+            <td th:text="${( loan.getAmountBorrowed() * loan.getInterestRate()/12/100)}"></td>
+            <td th:text="${loan.getExpectedEndDate()}"></td>
+    </table>
+</div>
+      <br>
+      <br>
+      <br>
+
+
+<div>
+  <h4>paid off loans</h4>
+</div>
+
+
+<!--
+Available funds:
+[ withdraw money] [account history]
+
+              profile image.
+                Fname, Lname
+                    [bio]
+[edit ]
+
+
+[currently outstanding loan]    [currently late loans]
+
+            -- monthly cost
+-->
+
+
+  </section>
+</main>
+<!--<div th:insert="~{Components/HeaderFooterComponents :: footer}"></div>-->
+</body>
+</html>
