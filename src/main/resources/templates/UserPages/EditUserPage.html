@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+    <meta charset="UTF-8">
+    <title>Collateral Create</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <section layout:fragment="body" class="py-5">
+        <h1>Lets make some edits </h1>
+
+    <div>
+        <p>Old First name: <span th:text="${the_user.getFirstName()}"></span></p>
+        <p>Old last : <span th:text="${the_user.getLastName()}"></span></p>
+        <p>Old email : <span th:text="${the_user.getEmail()}"></span></p>
+    </div>
+
+    <h3>set the new values here</h3>
+    <form th:object="${user}" th:action="@{/edit_profile}" method="post">
+        <label for="firstName">new first name</label>
+        <input id="firstName" type="text" th:field="*{firstName}" th:value="${the_user.getFirstName()}">
+
+        <label for="lastName">Last Name</label>
+        <input id="lastName" type="text" th:field="*{lastName}" th:value="${the_user.getLastName()}">
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="text" th:field="*{email}" th:value="${user.email}">
+
+        <button type="submit" >Update the value</button>
+    </form>
+
+</section>
+</main>
+
+</body>
+</html>

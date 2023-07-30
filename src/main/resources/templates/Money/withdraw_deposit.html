@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+  <meta charset="UTF-8">
+  <title>Collateral Create</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+  <section layout:fragment="body" class="py-5">
+
+  <h1>Cash available to withdraw: $<span th:text="${amount}"></span>
+  </h1>
+
+    <form method="post" th:action ="@{/withdraw}"
+          th:object="${moveMoney}"
+    >
+
+    <h4>Which bank account do you want to withdraw to?</h4>
+
+      <select
+              type="text"
+              class="form-control"
+              id="condition"
+              name="condition"
+              th:field="*{destination}"
+              placehold="Brand name">
+        <option th:value="RBC-9332" th:text="RBC-9332"></option>
+        <option th:value="CIBC-3312" th:text="CIBC-3312"></option>
+        <option th:value="BMO-0092" th:text="BMO-0092"></option>
+      </select>
+
+    <h4> How much money do you want to withdraw?</h4>
+    <div class="input-group mb-3">
+      <span class="input-group-text">$</span>
+      <input
+              th:field="*{amount}"
+              type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+      <span class="input-group-text">.00</span>
+    </div>
+
+      <button>
+        <a type="submit">withdraw money</a>
+      </button>
+
+  </form>
+
+
+
+
+
+
+
+  </section>
+</main>
+</body>
+</html>

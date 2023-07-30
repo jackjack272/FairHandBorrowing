@@ -18,9 +18,15 @@
         <h3>Interest payment : $<span th:text="${totalMonthly}"></span></h3>
       <br>
       <button type="button" class="btn btn-secondary">
-        <a >move money</a>
+        <a th:href="@{/money }" >withdraw money</a>
       </button>
-      <button type="button" class="btn btn-secondary">
+
+        <button type="button" class="btn btn-secondary">
+            <a >deposit</a>
+        </button>
+
+
+        <button type="button" class="btn btn-secondary">
         <a >Account history</a>
       </button>
     </div>
@@ -36,7 +42,7 @@
 
         <br />
       <button type="button" class="btn btn-success">
-        <a >set up a profile</a>
+        <a th:href="@{/edit_user}"> edit profile</a>
       </button>
     </div>
 
@@ -72,6 +78,20 @@
 
 <div>
   <h4>paid off loans</h4>
+    <table>
+        <thead>
+            <tr>
+                <td>loan number</td>
+                <td>interest rate</td>
+                <td>total paid over course of loan</td>
+            </tr>
+        </thead>
+        <tbody>
+
+
+
+        </tbody>
+    </table>
 </div>
 
 

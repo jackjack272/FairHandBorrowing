@@ -1,5 +1,6 @@
 package com.example.fairhandborrowing.Model;
 
+import com.example.fairhandborrowing.Controller.MoneyController;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,4 +40,8 @@ public class UserEntity {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "loans", referencedColumnName = "userId")
     private List<Loan> loans = new ArrayList<>();
+
+    // link money account
+    @OneToMany( mappedBy = "user", cascade = CascadeType.ALL)
+    private List<MoveMoney> moveMonies= new ArrayList<>();
 }
