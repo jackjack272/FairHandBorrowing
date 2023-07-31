@@ -52,10 +52,10 @@ public class HomeController {
             List<LoanDto> loanDtos = loanService.getAllLoansByUserId(user.getId());
             model.addAttribute("collaterals", collaterals);
             model.addAttribute("loans", loanDtos);
-            return "LandingPage/LandingPage";
+            return "home/borrower";
         }
 
-        return "LandingPage/LandingPage";
+        return "home/borrower";
     }
 
 }

@@ -45,14 +45,6 @@ public class SecurityConfig {
                 }).csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
-//        http.authorizeHttpRequests().requestMatchers("/login", "/register", "/css/**", "/js/**", "/layout/**", "legal/**")
-//                .permitAll()
-//                .and()
-//                .crsf().disabled()
-//                .and()
-//                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/home").loginProcessingUrl("/login").failureUrl("/login?error=true").permitAll())
-//                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll());
-//        return http.build();
     }
 
     public void addCorsMappings(CorsRegistry registry) {
