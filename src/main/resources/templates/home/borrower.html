@@ -10,30 +10,53 @@
 <body class="d-flex flex-column h-100">
 <main class="flex-shrink-0">
 
-  <section layout:fragment="body">
+  <section layout:fragment="body" class="mx-auto" style="width: 80vw">
       <button type="button" class="btn btn-success">
           <a th:href="@{/edit}">
               About my Account
           </a>
       </button>
 
-
       <div class="text-center mb-5">
           <h3 class="fw-bolder">Loans</h3>
       </div>
-      <a class="btn btn-primary" th:href="@{/loan/{userName}/new(userName=${user.getUserName()})}">Create Loan</a>
-      <div th:if="${loans.isEmpty()}">NO AVAILABLE LOANS</div>
-      <div th:if="${!loans.isEmpty()}"th:each="loan : ${loans}">
-          <div class="position-relative mb-3">
-              <a th:text="${loan.toString()}">Loan</a>
-          </div>
+      <div>
+        <a class="btn btn-primary" th:href="@{/loan/{userName}/new(userName=${user.getUserName()})}">Create Loan</a>
       </div>
+      <div th:if="${loans.isEmpty()}">NO AVAILABLE LOANS</div>
+
+      <table class="table table-striped table-hover" th:if="${!loans.isEmpty()}">
+          <thead class="thead-dark">
+          <tr>
+              <th scope="col">#</th>
+              <th scope="col">Created On</th>
+              <th scope="col">Created By</th>
+              <th scope="col">Total Amount</th>
+              <th scope="col">Interest Rate</th>
+              <th scope="col">Description</th>
+              <th scope="col">Months To Pay</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="loan : ${loans}">
+              <td th:text="${loan.getId()}"></td>
+              <td th:text="${loan.getCreatedOn()}"></td>
+              <td th:text="${loan.getUser().getUserName()}"></td>
+              <td th:text="${loan.getAmountBorrowed()}"></td>
+              <td th:text="${loan.getInterestRate()}"></td>
+              <td>ToDo Description of Loan</td>
+              <td>Months To Pay</td>
+          </tr>
+          </tbody>
+      </table>
       <br>
       <div class="text-center mb-5">
           <h3 class="fw-bolder">Collaterals</h3>
       </div>
-      <a class="btn btn-primary" th:href="@{/collateral/{userName}/new(userName=${user.getUserName()})}">Create Collateral</a>
-          <div th:if="${collaterals.isEmpty()}">NO AVAILABLE COLLATERALS</div>
+      <div>
+        <a class="btn btn-primary" th:href="@{/collateral/{userName}/new(userName=${user.getUserName()})}">Create Collateral</a>
+      </div>
+      <div th:if="${collaterals.isEmpty()}">NO AVAILABLE COLLATERALS</div>
       <div th:if="${!collaterals.isEmpty()}"th:each="collateral : ${collaterals}">
           <div class="position-relative mb-3">
               <a th:text="${collateral.getBrand()}" class="h3 fw-bolder text-decoration-none link-dark stretched-link" href="#!">Brand</a>
