@@ -1,11 +1,12 @@
 package com.example.fairhandborrowing.service;
 
 import com.example.fairhandborrowing.dto.LoanDto;
+import com.example.fairhandborrowing.model.Loan;
 
 import java.util.List;
 
 public interface LoanService {
-    List<LoanDto> getAllLoansByUserId(Long userId);
+    List<Loan> getAllLoansByUserId(Long userId);
 
-    LoanDto createLoan(String userName, LoanDto loanDto);
+    void createLoan(String userName, LoanDto loanDto);
 }

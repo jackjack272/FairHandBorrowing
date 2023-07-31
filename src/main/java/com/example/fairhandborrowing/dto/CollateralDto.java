@@ -1,5 +1,6 @@
 package com.example.fairhandborrowing.dto;
 
+import com.example.fairhandborrowing.model.UserEntity;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -31,6 +32,6 @@ public class CollateralDto {
     @NotNull
     private Double marketValue;
 
-    private UserRegistrationDto userRegistrationDto;
+    private UserEntity user;
 }
 

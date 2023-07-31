@@ -3,6 +3,8 @@ package com.example.fairhandborrowing.controller;
 import com.example.fairhandborrowing.dto.CollateralDto;
 import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.model.Collateral;
+import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.service.CollateralService;
 import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.service.UserService;
@@ -48,10 +50,10 @@ public class HomeController {
             model.addAttribute("userType", "borrower");
             //TODO fetch collateral of borrower
             //TODO fetch loans of borrower
-            List<CollateralDto> collaterals = collateralService.findAllCollaterals();
-            List<LoanDto> loanDtos = loanService.getAllLoansByUserId(user.getId());
+            List<Collateral> collaterals = collateralService.findAllCollaterals();
+            List<Loan> loans = loanService.getAllLoansByUserId(user.getId());
             model.addAttribute("collaterals", collaterals);
-            model.addAttribute("loans", loanDtos);
+            model.addAttribute("loans", loans);
             return "home/borrower";
         }
 

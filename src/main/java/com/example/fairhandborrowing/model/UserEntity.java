@@ -36,7 +36,6 @@ public class UserEntity {
     @JoinColumn(name = "profile_type", referencedColumnName = "id")
     private ProfileType profileType;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "loans", referencedColumnName = "userId")
-    private List<Loan> loans = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Loan> loans;
 }

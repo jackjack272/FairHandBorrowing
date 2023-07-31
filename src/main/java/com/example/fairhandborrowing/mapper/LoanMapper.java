@@ -12,7 +12,7 @@ public class LoanMapper {
                 .amountBorrowed(loanDto.getAmountBorrowed())
                 .interestRate(loanDto.getInterestRate())
                 .monthsToPay(loanDto.getMonthsToPay())
-                .collateralList(loanDto.getCollaterals().stream().map(collateralDto -> CollateralMapper.mapToModel(collateralDto)).collect(Collectors.toList()))
+                .collaterals(loanDto.getCollaterals())
                 .build();
 
         return loan;
@@ -26,8 +26,8 @@ public class LoanMapper {
             .interestRate(loan.getInterestRate())
             .monthsToPay(loan.getMonthsToPay())
             .createdOn(loan.getCreatedOn())
-            .collaterals(loan.getCollateralList().stream().map(collateral -> CollateralMapper.mapToDto(collateral)).collect(Collectors.toList()))
-            .user(UserMapper.mapToDto(loan.getUser()))
+            .collaterals(loan.getCollaterals())
+            .user(loan.getUser())
             .build();
 
     return loanDto;

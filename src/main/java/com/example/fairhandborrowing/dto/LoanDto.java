@@ -1,5 +1,7 @@
 package com.example.fairhandborrowing.dto;
 
+import com.example.fairhandborrowing.model.Collateral;
+import com.example.fairhandborrowing.model.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +25,7 @@ public class LoanDto {
 
     private Date createdOn;
 
-    private UserRegistrationDto user;
+    private UserEntity user;
 
-    private List<CollateralDto> collaterals;
+    private List<Collateral> collaterals;
 }

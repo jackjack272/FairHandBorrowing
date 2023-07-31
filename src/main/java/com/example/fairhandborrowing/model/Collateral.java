@@ -19,6 +19,7 @@ public class Collateral {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "collateral_id")
     private long id;
     private String itemName;
     private String brand;
@@ -35,10 +36,10 @@ public class Collateral {
     private LocalDateTime updatedOn;
 
     @ManyToOne
-    @JoinColumn(name = "owned_by", nullable = false)
-    private UserEntity ownedBy;
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "used_by", referencedColumnName = "id")
-    private Loan Loan;
+    @JoinColumn(name = "loan_id")
+    private Loan loan;
 }

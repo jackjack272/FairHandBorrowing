@@ -2,6 +2,7 @@ package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.service.UserService;
 import com.example.fairhandborrowing.security.SecurityUtil;
@@ -27,11 +28,11 @@ public class UserController {
     public String updateProfile(Model model){
         String username= SecurityUtil.getSessionUser();
         UserRegistrationDto userRegistrationDto= userService.findByUserName(username);
-        List<LoanDto> loanList=loanService.getAllLoansByUserId(userRegistrationDto.getId());
+        List<Loan> loanList=loanService.getAllLoansByUserId(userRegistrationDto.getId());
 
         // get the total monthly interest
         double totalMonthly= 0;
-        for(LoanDto x: loanList){
+        for(Loan x: loanList){
             totalMonthly+=x.getAmountBorrowed() *x.getInterestRate() /100/12;
         }
 

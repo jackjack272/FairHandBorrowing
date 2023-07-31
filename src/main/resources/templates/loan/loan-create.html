@@ -55,7 +55,7 @@
                                 name="collaterals"
                                 th:field="*{collaterals}"
                                 multiple="multiple">
-                            <option type="checkbox" th:each="collateral  : ${collaterals}" th:value="${collateral.getId()}" th:valuetype="com.example.fairhandborrowing.DTO.CollateralDto" th:text="${collateral.getBrand() + collateral.getItemName()}"></option>
+                            <option type="checkbox" th:each="collateral  : ${collaterals}" th:value="${collateral.getId()}" th:valuetype="com.example.fairhandborrowing.model.Collateral" th:text="${collateral.getBrand() + collateral.getItemName()}"></option>
                         </select>
                         <p th:if="${#fields.hasErrors('collaterals')}" class="text-danger" th:errors="*{collaterals}"></p>
                     </div>

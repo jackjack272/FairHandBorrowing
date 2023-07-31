@@ -17,9 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "loan")
 public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "loan_id")
     private Long id;
 
     private Double amountBorrowed;
@@ -34,11 +36,10 @@ public class Loan {
     @UpdateTimestamp(source = SourceType.DB)
     private Date updatedOn;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user", referencedColumnName = "userId")
-    private UserEntity user;
+    @OneToMany(mappedBy="loan", cascade = CascadeType.MERGE)
+    private List<Collateral> collaterals;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "collaterals", referencedColumnName = "id")
-    private List<Collateral> collateralList;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 }

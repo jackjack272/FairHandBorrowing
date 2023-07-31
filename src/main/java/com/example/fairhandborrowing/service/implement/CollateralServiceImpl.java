@@ -23,29 +23,24 @@ public class CollateralServiceImpl implements CollateralService {
     private UserRepository userRepository;
 
     @Override
-    public List<CollateralDto> findAllCollaterals() {
-        List<Collateral> collateral = collateralRepository.findAll();
+    public List<Collateral> findAllCollaterals() {
+        List<Collateral> collaterals = collateralRepository.findAll();
 
-        return collateral.stream().map(
-            oneItem-> {
-                CollateralDto dto = CollateralMapper.mapToDto(oneItem);
-                return dto;
-            }
-        ).collect(Collectors.toList());
+        return collaterals;
     }
 
     @Override
-    public List<CollateralDto> findAllCollateralsByUsername(String userName) {
+    public List<Collateral> findAllCollateralsByUsername(String userName) {
         UserEntity user = userRepository.findFirstByUsername(userName);
 
-        List<Collateral> collaterals = collateralRepository.findCollateralByOwnedBy(user);
+        List<Collateral> collaterals = collateralRepository.findCollateralByUser(user);
 
-        return collaterals.stream().map(collateral -> CollateralMapper.mapToDto(collateral)).collect(Collectors.toList());
+        return collaterals;
     }
 
     @Override
-    public CollateralDto findOneCollateral(long id) {
-        return CollateralMapper.mapToDto(collateralRepository.findById(id).get());
+    public Collateral findOneCollateral(long id) {
+        return collateralRepository.findById(id).get();
     }
 
     @Override
@@ -54,14 +49,14 @@ public class CollateralServiceImpl implements CollateralService {
     }
 
     @Override
-    public CollateralDto  createCollateral(String userName, CollateralDto collateralDto) {
+    public Collateral createCollateral(String userName, CollateralDto collateralDto) {
         UserEntity user = userRepository.findFirstByUsername(userName);
         Collateral collateral = CollateralMapper.mapToModel(collateralDto);
         collateral.setInUse(false);
-        collateral.setOwnedBy(user);
+        collateral.setUser(user);
 
         Collateral collateralResult = collateralRepository.save(collateral);
-        return CollateralMapper.mapToDto(collateralResult);
+        return collateralResult;
     }
 
 

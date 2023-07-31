@@ -2,6 +2,7 @@ package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.CollateralDto;
 import com.example.fairhandborrowing.dto.LoanDto;
+import com.example.fairhandborrowing.model.Collateral;
 import com.example.fairhandborrowing.service.CollateralService;
 import com.example.fairhandborrowing.service.LoanService;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class LoanController {
     public String craeteLoanForm(@PathVariable("userName") String userName, Model model) {
         LoanDto loan = new LoanDto();
 
-        List<CollateralDto> collaterals = collateralService.findAllCollateralsByUsername(userName);
+        List<Collateral> collaterals = collateralService.findAllCollateralsByUsername(userName);
         model.addAttribute("userName", userName);
         model.addAttribute("loan", loan);
         model.addAttribute("collaterals", collaterals);

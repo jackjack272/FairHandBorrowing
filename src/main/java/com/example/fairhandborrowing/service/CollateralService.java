@@ -1,18 +1,19 @@
 package com.example.fairhandborrowing.service;
 
 import com.example.fairhandborrowing.dto.CollateralDto;
+import com.example.fairhandborrowing.model.Collateral;
 
 import java.util.List;
 
 public interface CollateralService {
-    List<CollateralDto> findAllCollaterals();
+    List<Collateral> findAllCollaterals();
 
-    CollateralDto findOneCollateral(long id);
+    Collateral findOneCollateral(long id);
 
     void deleteCollateral(long id);
 
-    CollateralDto createCollateral(String userName, CollateralDto collateralDto);
+    Collateral createCollateral(String userName, CollateralDto collateralDto);
 
-    List<CollateralDto> findAllCollateralsByUsername(String userName);
+    List<Collateral> findAllCollateralsByUsername(String userName);
 
 }

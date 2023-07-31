@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CollateralRepository extends JpaRepository<Collateral, Long> {
 
-    List<Collateral> findCollateralByOwnedBy(UserEntity user);
+    List<Collateral> findCollateralByUser(UserEntity user);
 }
