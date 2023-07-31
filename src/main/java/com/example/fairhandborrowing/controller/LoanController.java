@@ -2,7 +2,9 @@ package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.CollateralDto;
 import com.example.fairhandborrowing.dto.LoanDto;
+import com.example.fairhandborrowing.mapper.LoanMapper;
 import com.example.fairhandborrowing.model.Collateral;
+import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.service.CollateralService;
 import com.example.fairhandborrowing.service.LoanService;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ public class LoanController {
     }
 
     @PostMapping("/loan/{userName}/new")
-    public String createCollateral(@PathVariable("userName") String userName, @ModelAttribute("loan") LoanDto loanDto,
+    public String addLoan(@PathVariable("userName") String userName, @ModelAttribute("loan") LoanDto loanDto,
                                    BindingResult result,
                                    Model model) {
         if(result.hasErrors()) {
@@ -51,6 +53,18 @@ public class LoanController {
         loanService.createLoan(userName, loanDto);
 
         return "redirect:/home";
+    }
+
+    @GetMapping("/loan/{userName}/edit")
+    public String editLoan(@PathVariable("userName") String userName, @RequestParam("loan_id") Long loanId,
+                                   Model model) {
+
+        Loan loan = loanService.getLoanById(loanId);
+        LoanDto loanDto = LoanMapper.mapToDto(loan);
+        List<Collateral> collaterals = collateralService.findAllCollateralsByUsername(userName);
+        model.addAttribute("allcollaterals", collaterals);
+        model.addAttribute("loan", loanDto);
+        return "loan/loan-edit";
     }
 
 }

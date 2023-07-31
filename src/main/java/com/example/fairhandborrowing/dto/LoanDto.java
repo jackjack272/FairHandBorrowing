@@ -28,4 +28,7 @@ public class LoanDto {
     private UserEntity user;
 
     private List<Collateral> collaterals;
+
+    private List<Long> collateralIds;
+
 }

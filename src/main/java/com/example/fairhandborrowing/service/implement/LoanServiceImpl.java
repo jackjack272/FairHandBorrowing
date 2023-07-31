@@ -39,6 +39,11 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public Loan getLoanById(Long loanId) {
+        return loanRepository.findById(loanId).get();
+    }
+
+    @Override
     public void createLoan(String userName, LoanDto loanDto) {
         UserEntity user = userRepository.findFirstByUsername(userName);
         Loan loan = LoanMapper.mapToModel(loanDto);
