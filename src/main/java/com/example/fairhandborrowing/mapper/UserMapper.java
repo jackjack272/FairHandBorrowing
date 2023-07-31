@@ -1,7 +1,7 @@
 package com.example.fairhandborrowing.mapper;
 
-import com.example.fairhandborrowing.DTO.UserRegistrationDto;
-import com.example.fairhandborrowing.Model.UserEntity;
+import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.model.UserEntity;
 
 public class UserMapper {
     public static UserEntity mapToModel(UserRegistrationDto user){

@@ -1,7 +1,7 @@
 package com.example.fairhandborrowing.mapper;
 
-import com.example.fairhandborrowing.DTO.LoanDto;
-import com.example.fairhandborrowing.Model.Loan;
+import com.example.fairhandborrowing.dto.LoanDto;
+import com.example.fairhandborrowing.model.Loan;
 
 import java.util.stream.Collectors;
 
@@ -11,7 +11,7 @@ public class LoanMapper {
         Loan loan = Loan.builder()
                 .amountBorrowed(loanDto.getAmountBorrowed())
                 .interestRate(loanDto.getInterestRate())
-                .expectedEndDate(loanDto.getExpectedEndDate())
+                .monthsToPay(loanDto.getMonthsToPay())
                 .collateralList(loanDto.getCollaterals().stream().map(collateralDto -> CollateralMapper.mapToModel(collateralDto)).collect(Collectors.toList()))
                 .build();
 
@@ -24,7 +24,8 @@ public class LoanMapper {
             .id(loan.getId())
             .amountBorrowed(loan.getAmountBorrowed())
             .interestRate(loan.getInterestRate())
-            .expectedEndDate(loan.getExpectedEndDate())
+            .monthsToPay(loan.getMonthsToPay())
+            .createdOn(loan.getCreatedOn())
             .collaterals(loan.getCollateralList().stream().map(collateral -> CollateralMapper.mapToDto(collateral)).collect(Collectors.toList()))
             .user(UserMapper.mapToDto(loan.getUser()))
             .build();

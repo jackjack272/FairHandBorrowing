@@ -1,7 +1,7 @@
 package com.example.fairhandborrowing.mapper;
 
-import com.example.fairhandborrowing.DTO.CollateralDto;
-import com.example.fairhandborrowing.Model.Collateral;
+import com.example.fairhandborrowing.dto.CollateralDto;
+import com.example.fairhandborrowing.model.Collateral;
 
 public class CollateralMapper {
     public static Collateral mapToModel(CollateralDto collateralDto){

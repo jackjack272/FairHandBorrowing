@@ -1,7 +1,7 @@
 package com.example.fairhandborrowing.security;
 
-import com.example.fairhandborrowing.Model.UserEntity;
-import com.example.fairhandborrowing.Repository.UserRepository;
+import com.example.fairhandborrowing.model.UserEntity;
+import com.example.fairhandborrowing.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
