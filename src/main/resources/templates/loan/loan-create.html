@@ -11,7 +11,6 @@
 <main class="flex-shrink-0">
     <section layout:fragment="body" class="py-5">
         <div class="container">
-
             <form role="form" method="post" th:action="@{/loan/{userName}/new(userName=${userName})}" th:object="${loan}">
                 <div class="form-row">
                     <div class="form-group col-md-6">

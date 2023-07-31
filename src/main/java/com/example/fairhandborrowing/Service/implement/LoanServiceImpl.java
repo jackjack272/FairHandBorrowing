@@ -36,17 +36,6 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Double getTotalLoanAmount(Long userId) {
-            List<LoanDto> lon=getAllLoansByUserId(userId);
-            double money=0;
-            for(LoanDto x: lon){
-                money+=x.getAmountBorrowed();
-            }
-
-        return money;
-    }
-
-    @Override
     public LoanDto createLoan(String userName, LoanDto loanDto) {
         UserEntity user = userRepository.findFirstByUsername(userName);
 

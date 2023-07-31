@@ -51,11 +51,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserRegistrationDto registrationDto) {
-        userRepository.save(UserMapper.mapToModel(registrationDto));
-    }
-
-    @Override
     public UserRegistrationDto findByEmail(String email) {
         Optional<UserEntity> user = userRepository.findByEmail(email);
         return user.isPresent() ? UserMapper.mapToDto(user.get()) : null;

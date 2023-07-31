@@ -8,7 +8,6 @@ import java.util.Optional;
 public interface UserService {
     Optional<UserRegistrationDto> saveUser(UserRegistrationDto registrationDto);
 
-    void updateUser(UserRegistrationDto registrationDto);
     UserRegistrationDto findByEmail(String email) ;
     UserRegistrationDto findByUserName(String userName);
 

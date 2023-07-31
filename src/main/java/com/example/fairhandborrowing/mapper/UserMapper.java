@@ -2,8 +2,6 @@ package com.example.fairhandborrowing.mapper;
 
 import com.example.fairhandborrowing.DTO.UserRegistrationDto;
 import com.example.fairhandborrowing.Model.UserEntity;
-import org.springframework.stereotype.Service;
-
 
 public class UserMapper {
     public static UserEntity mapToModel(UserRegistrationDto user){
