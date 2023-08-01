@@ -54,7 +54,7 @@
             <th scope="col">loan amount</th>
             <th scope="col">interest rate</th>
             <th scope="col">monthly interest payment</th>
-            <th scope="col">expected end date</th>
+            <th scope="col">months to pay</th>
         </tr>
         </thead>
         <tbody>
@@ -62,7 +62,7 @@
             <td th:text="${loan.getAmountBorrowed()}"></td>
             <td th:text="${loan.getInterestRate()}"></td>
             <td th:text="${( loan.getAmountBorrowed() * loan.getInterestRate()/12/100)}"></td>
-            <td th:text="${loan.getExpectedEndDate()}"></td>
+            <td th:text="${loan.getMonthsToPay()}"></td>
     </table>
 </div>
       <br>

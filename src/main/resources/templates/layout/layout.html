@@ -24,8 +24,10 @@
                 <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
                 <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" th:href="@{/login}">Login</a></li>
                 <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" th:href="@{/register}">Register</a></li>
+                <li sec:authorize="isAuthenticated() && hasAuthority('USER')" class="nav-item"><a class="nav-link" th:href="@{/profile}">Profile</a></li>
+                <li sec:authorize="isAuthenticated() && hasAuthority('USER')" class="nav-item"><a class="nav-link" th:href="@{/funds}">Funds</a></li>
                 <li sec:authorize="isAuthenticated()" class="nav-item dropdown nav-item">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Welcome</a>
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Welcome <span sec:authentication="principal.username"></span> </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
                         <a class="dropdown-item" th:href="@{/logout}">Logout</a>
                     </ul>
