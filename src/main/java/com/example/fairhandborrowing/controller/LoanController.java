@@ -27,24 +27,11 @@ import java.util.List;
 @RequestMapping
 public class LoanController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoanController.class);
-
-    private static final String LENDER_VALUE = "LENDER";
-
     @Autowired
     private LoanService loanService;
 
     @Autowired
     private CollateralService collateralService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ProfileTypeService profileTypeService;
-
-    @Autowired
-    private LoanFundsService loanFundsService;
 
     @GetMapping("/loan/{userName}/new" )
     public String craeteLoanForm(@PathVariable("userName") String userName, Model model) {
@@ -84,40 +71,6 @@ public class LoanController {
         model.addAttribute("allcollaterals", collaterals);
         model.addAttribute("loan", loanDto);
         return "loan/loan-edit";
-    }
-
-    @GetMapping("/requestFunds/{userName}/{loanId}/new")
-    public String createReqFundsPage(@PathVariable("userName") String userName, @PathVariable("loanId") Long loanId, Model model) {
-        String loggedUsername = SecurityUtil.getSessionUser();
-
-        ProfileType profileType = profileTypeService.getProfileByType(LENDER_VALUE);
-        Loan loan = loanService.getLoanById(loanId);
-        List<UserEntity> lenders = userService.findAllByType(profileType);
-        model.addAttribute("userName", userName);
-        model.addAttribute("loan", loan);
-        model.addAttribute("lenders", lenders);
-
-        return "loan/loan-fund";
-    }
-
-    @PostMapping("/requestFunds/{username}/{loanId}/new")
-    public String requestFunds(@PathVariable("username") String username,
-                               @PathVariable("loanId") Long loanId,
-                               @RequestParam(value = "lenderUsernames", required = false) String[] lenderUsernames,
-                               Model model) {
-
-        String loggedUsername = SecurityUtil.getSessionUser();
-
-        if(loggedUsername.equalsIgnoreCase(username)) {
-
-            for(String lenderUsername : lenderUsernames) {
-                UserEntity borrower = userService.findByUserName(username);
-                UserEntity lender = userService.findByUserName(lenderUsername);
-                Loan loan = loanService.getLoanById(loanId);
-                loanFundsService.sendFundRequest(borrower, lender, loan);
-            }
-    }
-        return "redirect:/home";
     }
 
     @PostMapping("/loan/{userName}/edit")

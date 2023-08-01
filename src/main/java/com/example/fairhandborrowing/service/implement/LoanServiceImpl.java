@@ -94,7 +94,13 @@ public class LoanServiceImpl implements LoanService {
     public void archiveLoan(Long loanId) {
         Loan loan = loanRepository.findById(loanId).get();
         loan.setArchived(true);
+        List<Collateral> collaterals = loan.getCollaterals();
 
+        collaterals.stream().forEach(collateral -> {
+            collateral.setLoan(null);
+            collateralRepository.saveAndFlush(collateral);
+        });
+        loan.setCollaterals(null);
         loanRepository.save(loan);
     }
 }

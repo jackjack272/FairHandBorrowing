@@ -32,15 +32,15 @@ public class LoanFundsServiceImpl implements LoanFundsService {
     }
 
     @Override
-    public void acceptFundRequest(LoanFunds fund) {
-        fund.setAccepted(true);
-
-        loanFundsRepository.save(fund);
-    }
-
-    @Override
     public List<LoanFunds> getPendingRequestsForUser(UserEntity user) {
         return loanFundsRepository.findByAcceptedAndLender(false, user);
     }
 
+    @Override
+    public void acceptFundRequest(Long fundLoanId, Double fundAmount) {
+        LoanFunds loanFunds = loanFundsRepository.findById(fundLoanId).get();
+        loanFunds.setAccepted(true);
+        loanFunds.setFundAmount(fundAmount);
+        loanFundsRepository.save(loanFunds);
+    }
 }

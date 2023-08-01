@@ -12,6 +12,8 @@ public class LoanFunds {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanFundId;
 
+    private Double fundAmount;
+
     private boolean accepted;
 
     @ManyToOne

@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface LoanFundsService {
     void sendFundRequest(UserEntity borrower, UserEntity lender , Loan loan);
-    void acceptFundRequest(LoanFunds fund);
 
     List<LoanFunds> getPendingRequestsForUser(UserEntity user);
+
+    void acceptFundRequest(Long fundLoanId, Double fundAmount);
 }

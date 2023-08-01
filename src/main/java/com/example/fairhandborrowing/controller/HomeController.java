@@ -3,6 +3,7 @@ package com.example.fairhandborrowing.controller;
 import com.example.fairhandborrowing.dto.CollateralDto;
 import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.mapper.LoanMapper;
 import com.example.fairhandborrowing.mapper.UserMapper;
 import com.example.fairhandborrowing.model.Collateral;
 import com.example.fairhandborrowing.model.Loan;
@@ -69,8 +70,23 @@ public class HomeController {
         // TODO fetch loans of borrower
         List<Collateral> collaterals = collateralService.findAllCollaterals();
         List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
+        List<LoanDto> loanDtos = new ArrayList<>();
+
+        loans.stream().forEach(loan -> {
+            LoanDto dto = LoanMapper.mapToDto(loan);
+            loanDtos.add(dto);
+        });
+
+        loanDtos.stream().forEach(loanDto -> {
+            StringBuilder colIdStrBuilder = new StringBuilder();
+            loanDto.getCollaterals().stream().forEach(collateral -> {
+                colIdStrBuilder.append(collateral.getItemName()).append(", ");
+            });
+            loanDto.setCollateralIdStr(colIdStrBuilder.toString().substring(0, colIdStrBuilder.length() - 2));
+        });
+
         model.addAttribute("collaterals", collaterals);
-        model.addAttribute("loans", loans);
+        model.addAttribute("loans", loanDtos);
         return "home/borrower";
       } else {
           List<LoanFunds> fundRequests = loanFundsService.getPendingRequestsForUser(userEntity);

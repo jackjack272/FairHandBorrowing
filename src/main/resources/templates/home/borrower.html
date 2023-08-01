@@ -10,31 +10,24 @@
 <body class="d-flex flex-column h-100">
 <main class="flex-shrink-0">
 
-  <section layout:fragment="body" class="mx-auto" style="width: 80vw">
-      <button type="button" class="btn btn-success">
-          <a th:href="@{/edit}">
-              About my Account
-          </a>
-      </button>
-
-      <div class="text-center mb-5">
-          <h3 class="fw-bolder">Loans</h3>
-      </div>
-      <div>
-        <a class="btn btn-primary" th:href="@{/loan/{userName}/new(userName=${user.getUserName()})}">Create Loan</a>
+  <section layout:fragment="body" class="mx-auto my-5" style="width: 80vw; min-height: 70vh">
+      <div class="d-flex justify-content-between flex-row my-2">
+          <h4 class="fw-bolder">Loans</h4>
+          <a class="btn btn-primary" th:href="@{/loan/{userName}/new(userName=${user.getUserName()})}"><i class="fa fa-plus" aria-hidden="true"></i> | Create Loan</a>
       </div>
       <div th:if="${loans.isEmpty()}">NO AVAILABLE LOANS</div>
 
       <table class="table table-striped table-hover" th:if="${!loans.isEmpty()}">
-          <thead class="thead-dark">
+          <thead class="table-dark">
           <tr>
-              <th scope="col">#</th>
+              <th scope="col">Loan ID</th>
               <th scope="col">Created On</th>
-              <th scope="col">Created By</th>
               <th scope="col">Total Amount</th>
               <th scope="col">Interest Rate</th>
               <th scope="col">Description</th>
-              <th scope="col">Months To Pay</th>
+              <th scope="col">Term (in Mos)</th>
+              <th scope="col">Collateral</th>
+              <th scope="col">Funding Status</th>
               <th scope="col">Actions</th>
           </tr>
           </thead>
@@ -42,65 +35,67 @@
           <tr th:each="loan : ${loans}">
               <td th:text="${loan.getId()}"></td>
               <td th:text="${loan.getCreatedOn()}"></td>
-              <td th:text="${loan.getUser().getUsername()}"></td>
               <td th:text="${loan.getAmountBorrowed()}"></td>
               <td th:text="${loan.getInterestRate()}"></td>
-              <td th:text="${loan.getDescription()}">ToDo Description of Loan</td>
-              <td th:text="${loan.getMonthsToPay()}">Months To Pay</td>
+              <td th:text="${loan.getDescription()}"></td>
+              <td th:text="${loan.getMonthsToPay()}"></td>
+              <td th:text="${loan.getCollateralIdStr()}"></td>
               <td>
-<!--                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">-->
-<!--                      Launch demo modal-->
-<!--                  </button>-->
-
-<!--                  &lt;!&ndash; Modal &ndash;&gt;-->
-<!--                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--                      <div class="modal-dialog" role="document">-->
-<!--                          <div class="modal-content">-->
-<!--                              <div class="modal-header">-->
-<!--                                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>-->
-<!--                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                                      <span aria-hidden="true">&times;</span>-->
-<!--                                  </button>-->
-<!--                              </div>-->
-<!--                              <div class="modal-body">-->
-<!--                                  <p th:text="${loan.getId()}"></p>-->
-<!--                              </div>-->
-<!--                              <div class="modal-footer">-->
-<!--                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-<!--                                  <button type="button" class="btn btn-primary">Save changes</button>-->
-<!--                              </div>-->
-<!--                          </div>-->
-<!--                      </div>-->
-<!--                  </div>-->
+                  <div class="progress">
+                      <div class="progress-bar" role="progressbar" th:style="${'width: ' + '70' + '%;'}" aria-valuemin="0" aria-valuemax="100">70%</div>
+                  </div>
+              </td>
+              <td>
                   <a class="btn btn-warning"
                      th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-pencil"></i>
                   </a>
-                  <form role="form" method="post"
-                        style="display: inline"
-                        th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
-                      <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i></button>
-                  </form>
-                  <a type="button" class="btn btn-success" th:href="@{/requestFunds/{userName}/{loanId}/new(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                  <a type="button" class="btn btn-success" th:href="@{/funds/{userName}/{loanId}/request(loanId=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-usd"></i>
                   </a>
+
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#archiveLoanModal" th:attrappend="data-target=${loan.id}">
+                      <i class="fa fa-times"></i>
+                  </button>
+
+                  <!-- Archive Modal -->
+                  <div class="modal fade" id="archiveLoanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                       th:attrappend="id=${loan.id}">
+                      <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Archive Loan?</h5>
+                                  <button type="button" class="btn btn-close" data-dismiss="modal" />
+                              </div>
+                              <div class="modal-body">
+                                  <p th:text="'You are about to archive loan ID=' + ${loan.id} + '. Proceed?'"></p>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                  <form role="form" method="post"
+                                        style="display: inline"
+                                        th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
+                                      <button type="submit" class="btn btn-danger">Yes</button>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
               </td>
           </tr>
           </tbody>
       </table>
 
       <br>
-      <div class="text-center mb-5">
-          <h3 class="fw-bolder">Collaterals</h3>
-      </div>
-      <div>
-        <a class="btn btn-primary" th:href="@{/collateral/{userName}/new(userName=${user.getUserName()})}">Create Collateral</a>
+      <div class="d-flex justify-content-between flex-row my-2">
+          <h4 class="fw-bolder">Collaterals</h4>
+          <a class="btn btn-primary" th:href="@{/collateral/{userName}/new(userName=${user.getUserName()})}"><i class="fa fa-plus" aria-hidden="true"></i> | Create Collateral</a>
       </div>
       <div th:if="${collaterals.isEmpty()}">NO AVAILABLE COLLATERALS</div>
       <table class="table table-striped table-hover" th:if="${!collaterals.isEmpty()}">
-          <thead class="thead-dark">
+          <thead class="table-dark">
           <tr>
-              <th scope="col">#</th>
+              <th scope="col">Collateral ID</th>
               <th scope="col">Item Name</th>
               <th scope="col">Brand</th>
               <th scope="col">Description</th>
@@ -117,7 +112,7 @@
               <td th:text="${collateral.getDescription()}"></td>
               <td th:text="${collateral.getItemCondition()}"></td>
               <td th:text="${collateral.getMarketValue()}"></td>
-              <td th:text="${collateral.getLoan().getId()}"></td>
+              <td th:text="${collateral.getLoan() != null} ? ${collateral.getLoan().getId()} : '-' "></td>
           </tr>
           </tbody>
       </table>

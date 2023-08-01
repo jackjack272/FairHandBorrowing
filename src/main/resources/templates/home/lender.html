@@ -36,12 +36,66 @@
                 <td th:text="${fundRequest.getLoan().getMonthsToPay()}"></td>
                 <td>To Do Description</td>
                 <td>
-                    <a type="button" class="btn btn-success" th:href="@{/requestFunds/{userName}/{loanId}/new(loanId=${fundRequest.getLoan().getId()}, userName=${user.getUserName()})}">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptFundingModal" th:attrappend="data-target=${fundRequest.getLoan().getId()}">
                         <i class="fa fa-check"></i>
-                    </a>
-<!--                    <a class="btn btn-warning" th:href="@{/loan/{userName}/edit(loan_id=${fundRequest.getLoan().getId()}, userName=${user.getUserName()})}">-->
-<!--                        <i class="fa fa-x"></i>-->
-<!--                    </a>-->
+                    </button>
+
+                    <!-- Accept Funding Request Modal -->
+                    <div class="modal fade" id="acceptFundingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                         th:attrappend="id=${fundRequest.getLoan().getId()}">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Accept Loan Request</h5>
+                                    <button type="button" class="btn btn-close" data-dismiss="modal" />
+                                </div>
+                                <form class="needs-validation" novalidate
+                                      method="post"
+                                      th:action="@{/funds/{userName}/{fundLoanId}/acceptance(userName=${user.getUserName()}, fundLoanId=${fundRequest.getLoanFundId()})}"
+                                >
+                                <div class="modal-body">
+                                        <p th:text="'Enter the fund amount you would lend. Note that this is going to be deducted from your vault upon acceptance.'" />
+                                        <div class="form-row">
+                                            <label for="fundAmount">Fund Amount</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="inputGroupPrepend">$</span>
+                                                </div>
+                                                <input type="number" name="fundAmount" step="0.01" min="20" max="100" class="form-control" id="fundAmount" placeholder="Enter Fund Amount" aria-describedby="inputGroupPrepend" required>
+                                                <div class="invalid-feedback">
+                                                    Please enter a valid fund amount.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Accept Loan Request</button>
+                                    </div>
+                                </form>
+                                <script>
+                                    // Example starter JavaScript for disabling form submissions if there are invalid fields
+                                    (function() {
+                                        'use strict';
+                                        window.addEventListener('load', function() {
+                                            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                                            var forms = document.getElementsByClassName('needs-validation');
+                                            // Loop over them and prevent submission
+                                            var validation = Array.prototype.filter.call(forms, function(form) {
+                                                form.addEventListener('submit', function(event) {
+                                                    if (form.checkValidity() === false) {
+                                                        event.preventDefault();
+                                                        event.stopPropagation();
+                                                    }
+                                                    form.classList.add('was-validated');
+                                                }, false);
+                                            });
+                                        }, false);
+                                    })();
+                                </script>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
             </tbody>
@@ -51,3 +105,4 @@
 </main>
 </body>
 </html>
+
