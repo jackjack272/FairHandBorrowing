@@ -76,9 +76,6 @@
                      th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-pencil"></i>
                   </a>
-                  <a type="button" class="btn btn-danger" th:href="@{/loan/{userName}/cancel(id=${loan.getId()}, userName=${user.getUserName()})}">
-                      <i class="fa fa-times"></i>
-                  </a>
                   <form role="form" method="post"
                         style="display: inline"
                         th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
@@ -105,7 +102,6 @@
           <tr>
               <th scope="col">#</th>
               <th scope="col">Item Name</th>
-              <th scope="col">Type</th>
               <th scope="col">Brand</th>
               <th scope="col">Description</th>
               <th scope="col">Item Condition</th>
@@ -117,12 +113,11 @@
           <tr th:each="collateral : ${collaterals}">
               <td th:text="${collateral.getId()}"></td>
               <td th:text="${collateral.getItemName()}"></td>
-              <td>ToDo Get Type</td>
               <td th:text="${collateral.getBrand()}"></td>
               <td th:text="${collateral.getDescription()}"></td>
               <td th:text="${collateral.getItemCondition()}"></td>
               <td th:text="${collateral.getMarketValue()}"></td>
-              <td>ToDo Get Associated Loan ID</td>
+              <td th:text="${collateral.getLoan().getId()}"></td>
           </tr>
           </tbody>
       </table>
