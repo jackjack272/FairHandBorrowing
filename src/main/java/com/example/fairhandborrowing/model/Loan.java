@@ -30,6 +30,12 @@ public class Loan {
 
     private int monthsToPay;
 
+    private String description;
+
+    private boolean isArchived;
+
+    private boolean isActive;
+
     @CreationTimestamp(source = SourceType.DB)
     private Date createdOn;
 

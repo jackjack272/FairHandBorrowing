@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
@@ -40,6 +41,14 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public List<Loan> getAllNonArchivedLoansByUserId(Long userId) {
+        List<Loan> loans = getAllLoansByUserId(userId);
+
+        List<Loan> filteredLoans = loans.stream().filter(loan -> !loan.isArchived()).collect(Collectors.toList());
+        return filteredLoans;
+    }
+
+    @Override
     public Loan getLoanById(Long loanId) {
         return loanRepository.findById(loanId).get();
     }
@@ -58,32 +67,34 @@ public class LoanServiceImpl implements LoanService {
             c.setLoan(loan);
             collateralRepository.saveAndFlush(c);
         }
+    }
 
-//        ListIterator itr = collaterals.listIterator();
-//        while (itr.hasNext()) {
-//            Collateral c = (Collateral) itr.next();
-//            c.setLoan(loan);
-//            collateralRepository.saveAndFlush(c);
-//        }
+    @Override
+    public void editLoan(Long loanId, LoanDto loanDto, String[] collaterals) {
+        Loan loan = getLoanById(loanId);
+        loan.setDescription(loanDto.getDescription());
+        loan.setAmountBorrowed(loanDto.getAmountBorrowed());
+        loan.setInterestRate(loanDto.getInterestRate());
+        loan.setMonthsToPay(loanDto.getMonthsToPay());
+        List<Collateral> collateralAccumulator = new ArrayList<>();
 
-//        collaterals.map(collateral -> {
-////            collateral.setInUse(true);
-//            collateral.setLoan(loan);
-//            collateralRepository.save(collateral);
-//        });
-////
-//        collaterals.forEach(collateral -> {
-//            collateral.setLoan(loan);
-//            collateralRepository.saveAndFlush(collateral);
-//        });
+        if(collaterals != null) {
+            for(String col : collaterals) {
+                Collateral collateral = collateralRepository.findById(Long.valueOf(col)).get();
+                collateral.setLoan(loan);
+                collateralAccumulator.add(collateral);
+            }
+            loan.setCollaterals(collateralAccumulator);
+        }
 
-//        List<Collateral> collaterals = loan.getCollaterals();
-//        collaterals.stream().forEach(collateral -> {
-//            collateral.setInUse(true);
-//            collateral.setLoan(loan);
-//            collateralRepository.save(collateral);
-//        });
+        loanRepository.save(loan);
+    }
 
-//        return loanResult;
+    @Override
+    public void archiveLoan(Long loanId) {
+        Loan loan = loanRepository.findById(loanId).get();
+        loan.setArchived(true);
+
+        loanRepository.save(loan);
     }
 }
