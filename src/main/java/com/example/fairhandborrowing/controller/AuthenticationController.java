@@ -1,6 +1,7 @@
 package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.security.SecurityUtil;
 import com.example.fairhandborrowing.service.ProfileTypeService;
 import com.example.fairhandborrowing.service.UserService;
 import org.slf4j.Logger;
@@ -101,8 +102,14 @@ public class AuthenticationController {
 
     @GetMapping("/login")
     public String login(Model model){
-        model.addAttribute("user",new UserRegistrationDto());
-        return "Registration/Login";
+        String username = SecurityUtil.getSessionUser();
+
+        if(username == null) {
+            model.addAttribute("user", new UserRegistrationDto());
+            return "Registration/Login";
+        }
+
+        return "redirect:/home";
     }
 
 }

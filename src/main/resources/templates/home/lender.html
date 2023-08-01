@@ -1,10 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Home</title>
 </head>
-<body>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
 
+    <section layout:fragment="body" class="mx-auto" style="width: 80vw">
+        <div class="text-center mb-5">
+            <h3 class="fw-bolder">Pending Fund Requests</h3>
+        </div>
+        <div th:if="${fundRequests.isEmpty()}">NO AVAILABLE FUNDING REQUESTS</div>
+
+        <table class="table table-striped table-hover" th:if="${!fundRequests.isEmpty()}">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Borrower's Name</th>
+                <th scope="col">Total Amount</th>
+                <th scope="col">Interest Rate</th>
+                <th scope="col">Months To Pay</th>
+                <th scope="col">Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="fundRequest : ${fundRequests}">
+                <td th:text="${fundRequest.getLoan().getId()}"></td>
+                <td th:text="${fundRequest.getLoan().getUser().getUsername() + ' ' + fundRequest.getLoan().getUser().getLastName()}"></td>
+                <td th:text="${fundRequest.getLoan().getAmountBorrowed()}"></td>
+                <td th:text="${fundRequest.getLoan().getInterestRate()}"></td>
+                <td th:text="${fundRequest.getLoan().getMonthsToPay()}"></td>
+                <td>To Do Description</td>
+                <td>
+                    <a type="button" class="btn btn-success" th:href="@{/requestFunds/{userName}/{loanId}/new(loanId=${fundRequest.getLoan().getId()}, userName=${user.getUserName()})}">
+                        <i class="fa fa-check"></i>
+                    </a>
+<!--                    <a class="btn btn-warning" th:href="@{/loan/{userName}/edit(loan_id=${fundRequest.getLoan().getId()}, userName=${user.getUserName()})}">-->
+<!--                        <i class="fa fa-x"></i>-->
+<!--                    </a>-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+<!--        <div class="text-center mb-5">-->
+<!--            <h3 class="fw-bolder">Collaterals</h3>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <a class="btn btn-primary" th:href="@{/collateral/{userName}/new(userName=${user.getUserName()})}">Create Collateral</a>-->
+<!--        </div>-->
+<!--        <div th:if="${collaterals.isEmpty()}">NO AVAILABLE COLLATERALS</div>-->
+<!--        <div th:if="${!collaterals.isEmpty()}"th:each="collateral : ${collaterals}">-->
+<!--            <div class="position-relative mb-3">-->
+<!--                <a th:text="${collateral.getBrand()}" class="h3 fw-bolder text-decoration-none link-dark stretched-link" href="#!">Brand</a>-->
+<!--                <a th:text="${collateral.getItemName()}">Item Name</a>-->
+<!--                <a th:text="${collateral.getCondition()}">Condition</a>-->
+<!--                <a th:text="${collateral.getMarketValue()}">Market Value</a>-->
+<!--                <a th:text="${collateral.getInUse()}">In Use</a>-->
+<!--            </div>-->
+<!--        </div>-->
+    </section>
+</main>
 </body>
 </html>

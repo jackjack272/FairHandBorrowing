@@ -16,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Configuration
 @EnableGlobalAuthentication
+@EnableWebSecurity
 public class SecurityConfig {
     private final CustomUserDetailsService userService;
 

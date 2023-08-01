@@ -42,4 +42,7 @@ public class Loan {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.MERGE)
+    private List<LoanFunds> loanFunds;
 }

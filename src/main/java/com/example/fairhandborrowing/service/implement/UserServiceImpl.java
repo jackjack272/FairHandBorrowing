@@ -1,6 +1,7 @@
 package com.example.fairhandborrowing.service.implement;
 
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.model.ProfileType;
 import com.example.fairhandborrowing.model.Role;
 import com.example.fairhandborrowing.model.UserEntity;
 import com.example.fairhandborrowing.repository.ProfileTypeRepository;
@@ -13,13 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     private final static String USER_ROLE = "USER";
-
 
     @Autowired
     private UserRepository userRepository;
@@ -57,11 +57,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRegistrationDto findByUserName(String userName) {
+    public UserEntity findByUserName(String userName) {
         Optional<UserEntity> user = userRepository.findByUsername(userName);
 
-        return user.isPresent() ? UserMapper.mapToDto(user.get()) : null;
+        return user.isPresent() ? user.get() : null;
     }
 
 
+    @Override
+    public List<UserEntity> findAllByType(ProfileType type) {
+        return userRepository.findAllByProfileType(type);
+    }
 }

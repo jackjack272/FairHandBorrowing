@@ -2,7 +2,9 @@ package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.mapper.UserMapper;
 import com.example.fairhandborrowing.model.Loan;
+import com.example.fairhandborrowing.model.UserEntity;
 import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.service.UserService;
 import com.example.fairhandborrowing.security.SecurityUtil;
@@ -27,7 +29,7 @@ public class UserController {
     @GetMapping("/edit")
     public String updateProfile(Model model){
         String username= SecurityUtil.getSessionUser();
-        UserRegistrationDto userRegistrationDto= userService.findByUserName(username);
+        UserRegistrationDto userRegistrationDto= UserMapper.mapToDto(userService.findByUserName(username));
         List<Loan> loanList=loanService.getAllLoansByUserId(userRegistrationDto.getId());
 
         // get the total monthly interest

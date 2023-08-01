@@ -23,4 +23,9 @@ public class ProfileTypeServiceImpl implements ProfileTypeService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public ProfileType getProfileByType(String type) {
+        return profileTypeRepository.findProfileTypeByTypeName(type);
+    }
+
 }

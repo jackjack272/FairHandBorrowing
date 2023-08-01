@@ -78,7 +78,7 @@
                   <a type="button" class="btn btn-danger" th:href="@{/loan/{userName}/cancel(id=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-times"></i>
                   </a>
-                  <a type="button" class="btn btn-success" th:href="@{/loan/{userName}/request(id=${loan.getId()}, userName=${user.getUserName()})}">
+                  <a type="button" class="btn btn-success" th:href="@{/requestFunds/{userName}/{loanId}/new(loanId=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-usd"></i>
                   </a>
               </td>
