@@ -23,6 +23,12 @@ public class LoanDto {
 
     private int monthsToPay;
 
+    private String description;
+
+    private boolean isArchived;
+
+    private boolean isActive;
+
     private Date createdOn;
 
     private UserEntity user;

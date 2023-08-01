@@ -51,7 +51,7 @@ public class HomeController {
             //TODO fetch collateral of borrower
             //TODO fetch loans of borrower
             List<Collateral> collaterals = collateralService.findAllCollaterals();
-            List<Loan> loans = loanService.getAllLoansByUserId(user.getId());
+            List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
             model.addAttribute("collaterals", collaterals);
             model.addAttribute("loans", loans);
             return "home/borrower";

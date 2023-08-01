@@ -9,6 +9,9 @@ public class LoanMapper {
 
     public static Loan mapToModel(LoanDto loanDto) {
         Loan loan = Loan.builder()
+                .description(loanDto.getDescription())
+                .isArchived(loanDto.isArchived())
+                .isActive(loanDto.isActive())
                 .amountBorrowed(loanDto.getAmountBorrowed())
                 .interestRate(loanDto.getInterestRate())
                 .monthsToPay(loanDto.getMonthsToPay())
@@ -21,14 +24,17 @@ public class LoanMapper {
     public static LoanDto mapToDto(Loan loan) {
     LoanDto loanDto =
         LoanDto.builder()
-            .id(loan.getId())
-            .amountBorrowed(loan.getAmountBorrowed())
-            .interestRate(loan.getInterestRate())
-            .monthsToPay(loan.getMonthsToPay())
-            .createdOn(loan.getCreatedOn())
-            .collaterals(loan.getCollaterals())
-            .user(loan.getUser())
-            .build();
+                .id(loan.getId())
+                .description(loan.getDescription())
+                .isArchived(loan.isArchived())
+                .isActive(loan.isActive())
+                .amountBorrowed(loan.getAmountBorrowed())
+                .interestRate(loan.getInterestRate())
+                .monthsToPay(loan.getMonthsToPay())
+                .createdOn(loan.getCreatedOn())
+                .collaterals(loan.getCollaterals())
+                .user(loan.getUser())
+                .build();
 
     return loanDto;
     }

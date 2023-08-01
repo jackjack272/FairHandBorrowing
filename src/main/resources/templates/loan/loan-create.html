@@ -13,6 +13,12 @@
         <div class="container">
             <form role="form" method="post" th:action="@{/loan/{userName}/new(userName=${userName})}" th:object="${loan}">
                 <div class="form-row">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Description</span>
+                        </div>
+                        <textarea th:field="*{description}" class="form-control" aria-label="With textarea"></textarea>
+                    </div>
                     <div class="form-group col-md-6">
                         <label for="amount">Amount</label>
                         <input

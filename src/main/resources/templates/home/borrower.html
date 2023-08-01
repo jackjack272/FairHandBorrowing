@@ -45,8 +45,8 @@
               <td th:text="${loan.getUser().getUsername()}"></td>
               <td th:text="${loan.getAmountBorrowed()}"></td>
               <td th:text="${loan.getInterestRate()}"></td>
-              <td>ToDo Description of Loan</td>
-              <td>Months To Pay</td>
+              <td th:text="${loan.getDescription()}">ToDo Description of Loan</td>
+              <td th:text="${loan.getMonthsToPay()}">Months To Pay</td>
               <td>
 <!--                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">-->
 <!--                      Launch demo modal-->
@@ -72,13 +72,17 @@
 <!--                          </div>-->
 <!--                      </div>-->
 <!--                  </div>-->
-                  <a class="btn btn-warning" th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
+                  <a class="btn btn-warning"
+                     th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-pencil"></i>
                   </a>
-                  <a type="button" class="btn btn-danger" th:href="@{/loan/{userName}/cancel(id=${loan.getId()}, userName=${user.getUserName()})}">
-                      <i class="fa fa-times"></i>
-                  </a>
-                  <a type="button" class="btn btn-success" th:href="@{/loan/{userName}/request(id=${loan.getId()}, userName=${user.getUserName()})}">
+                  <form role="form" method="post"
+                        style="display: inline"
+                        th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
+                      <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i></button>
+                  </form>
+                  <a type="button" class="btn btn-success"
+                     th:href="@{/loan/{userName}/request(id=${loan.getId()}, userName=${user.getUserName()})}">
                       <i class="fa fa-usd"></i>
                   </a>
               </td>
