@@ -35,8 +35,7 @@ public class LoanDto {
 
     private List<Collateral> collaterals;
 
-//    private List<Long> collateralIds;
-
     private String collateralIdStr;
 
+    private Integer fundProgress;
 }

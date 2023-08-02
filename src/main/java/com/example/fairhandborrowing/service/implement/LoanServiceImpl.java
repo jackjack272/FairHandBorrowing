@@ -3,10 +3,12 @@ package com.example.fairhandborrowing.service.implement;
 import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.model.Collateral;
 import com.example.fairhandborrowing.model.Loan;
+import com.example.fairhandborrowing.model.LoanFunds;
 import com.example.fairhandborrowing.model.UserEntity;
 import com.example.fairhandborrowing.repository.CollateralRepository;
 import com.example.fairhandborrowing.repository.LoanRepository;
 import com.example.fairhandborrowing.repository.UserRepository;
+import com.example.fairhandborrowing.service.LoanFundsService;
 import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.mapper.LoanMapper;
 import org.slf4j.Logger;
@@ -33,6 +35,9 @@ public class LoanServiceImpl implements LoanService {
 
     @Autowired
     private CollateralRepository collateralRepository;
+
+    @Autowired
+    private LoanFundsService loanFundsService;
 
     @Override
     public List<Loan> getAllLoansByUserId(Long userId) {
@@ -102,5 +107,27 @@ public class LoanServiceImpl implements LoanService {
         });
         loan.setCollaterals(null);
         loanRepository.save(loan);
+    }
+
+    @Override
+    public void prepareDtos(List<LoanDto> loanDtos, List<Loan> loans) {
+        loans.stream().forEach(loan -> {
+            LoanDto dto = LoanMapper.mapToDto(loan);
+            loanDtos.add(dto);
+        });
+
+        loanDtos.stream().forEach(loanDto -> {
+            StringBuilder colIdStrBuilder = new StringBuilder();
+            loanDto.getCollaterals().stream().forEach(collateral -> {
+                colIdStrBuilder.append(collateral.getItemName()).append(", ");
+            });
+            loanDto.setCollateralIdStr(colIdStrBuilder.toString().substring(0, colIdStrBuilder.length() - 2));
+        });
+
+        loanDtos.stream().forEach(loanDto -> {
+            Double fundProgress = loanFundsService.calculateLoanFundingProgress(loanDto);
+            loanDto.setFundProgress((int) Math.round(fundProgress * 100));
+        });
+
     }
 }

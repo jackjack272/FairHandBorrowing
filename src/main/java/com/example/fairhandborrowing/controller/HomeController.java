@@ -66,24 +66,11 @@ public class HomeController {
       model.addAttribute("user", user);
       if (user.getProfileType().equalsIgnoreCase("BORROWER")) {
         model.addAttribute("userType", "borrower");
-        // TODO fetch collateral of borrower
-        // TODO fetch loans of borrower
         List<Collateral> collaterals = collateralService.findAllCollaterals();
         List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
         List<LoanDto> loanDtos = new ArrayList<>();
 
-        loans.stream().forEach(loan -> {
-            LoanDto dto = LoanMapper.mapToDto(loan);
-            loanDtos.add(dto);
-        });
-
-        loanDtos.stream().forEach(loanDto -> {
-            StringBuilder colIdStrBuilder = new StringBuilder();
-            loanDto.getCollaterals().stream().forEach(collateral -> {
-                colIdStrBuilder.append(collateral.getItemName()).append(", ");
-            });
-            loanDto.setCollateralIdStr(colIdStrBuilder.toString().substring(0, colIdStrBuilder.length() - 2));
-        });
+        loanService.prepareDtos(loanDtos, loans);
 
         model.addAttribute("collaterals", collaterals);
         model.addAttribute("loans", loanDtos);

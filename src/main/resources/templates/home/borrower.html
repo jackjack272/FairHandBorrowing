@@ -42,7 +42,8 @@
               <td th:text="${loan.getCollateralIdStr()}"></td>
               <td>
                   <div class="progress">
-                      <div class="progress-bar" role="progressbar" th:style="${'width: ' + '70' + '%;'}" aria-valuemin="0" aria-valuemax="100">70%</div>
+                      <div class="progress-bar" role="progressbar" th:style="${'width: ' + loan.getFundProgress() + '%;'}" aria-valuemin="0" aria-valuemax="100"
+                      th:text="${loan.getFundProgress() + '%'}"></div>
                   </div>
               </td>
               <td>

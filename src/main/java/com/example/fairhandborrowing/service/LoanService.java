@@ -17,4 +17,6 @@ public interface LoanService {
     void editLoan(Long loanId, LoanDto loanDto, String[] collaterals);
 
     void archiveLoan(Long loanId);
+
+    void prepareDtos(List<LoanDto> loanDtos, List<Loan> loans);
 }

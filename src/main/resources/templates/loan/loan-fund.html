@@ -41,7 +41,7 @@
                 </div>
             </div>
             <br>
-            <form role="form" method="post" th:action="@{/requestFunds/{username}/{loanId}/new(username=${userName},loanId=${loan.getId()})}">
+            <form role="form" method="post" th:action="@{/funds/{username}/{loanId}/request(username=${userName},loanId=${loan.getId()})}">
                     <div class="form-group col-md-6">
                         <label for="lenders">Available Lenders</label>
                         <select

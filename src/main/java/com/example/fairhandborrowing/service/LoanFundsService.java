@@ -1,5 +1,6 @@
 package com.example.fairhandborrowing.service;
 
+import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.model.LoanFunds;
 import com.example.fairhandborrowing.model.UserEntity;
@@ -12,4 +13,6 @@ public interface LoanFundsService {
     List<LoanFunds> getPendingRequestsForUser(UserEntity user);
 
     void acceptFundRequest(Long fundLoanId, Double fundAmount);
+
+    Double calculateLoanFundingProgress(LoanDto loanDto);
 }

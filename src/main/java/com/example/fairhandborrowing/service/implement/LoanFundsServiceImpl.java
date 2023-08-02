@@ -1,5 +1,7 @@
 package com.example.fairhandborrowing.service.implement;
 
+import com.example.fairhandborrowing.dto.LoanDto;
+import com.example.fairhandborrowing.mapper.LoanMapper;
 import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.model.LoanFunds;
 import com.example.fairhandborrowing.model.UserEntity;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class LoanFundsServiceImpl implements LoanFundsService {
@@ -42,5 +45,22 @@ public class LoanFundsServiceImpl implements LoanFundsService {
         loanFunds.setAccepted(true);
         loanFunds.setFundAmount(fundAmount);
         loanFundsRepository.save(loanFunds);
+    }
+
+    @Override
+    public Double calculateLoanFundingProgress(LoanDto loanDto) {
+        List<LoanFunds> loanFunds = loanFundsRepository.findByLoanId(loanDto.getId());
+        Double fundingProgress = 0.0;
+        Double totalFundingNeeded = loanDto.getAmountBorrowed();
+        AtomicReference<Double> totalFunded = new AtomicReference<>(0.0);
+
+        loanFunds.stream().forEach(lf -> {
+            if(lf.getFundAmount() != null)
+                totalFunded.updateAndGet(v -> v + lf.getFundAmount());
+        });
+
+        if(totalFunded.get() == 0.0 || totalFundingNeeded == 0.0) return totalFunded.get();
+
+        return totalFunded.get()/totalFundingNeeded;
     }
 }
