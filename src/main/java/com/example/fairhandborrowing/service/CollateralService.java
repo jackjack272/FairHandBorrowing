@@ -10,7 +10,7 @@ public interface CollateralService {
 
     Collateral findOneCollateral(long id);
 
-    void deleteCollateral(long id);
+    void deleteCollateral(Long collateralId);
 
     Collateral createCollateral(String userName, CollateralDto collateralDto);
 

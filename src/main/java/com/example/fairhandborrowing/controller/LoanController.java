@@ -58,10 +58,10 @@ public class LoanController {
         return "redirect:/home";
     }
 
-    @GetMapping("/loan/{userName}/edit")
+    @GetMapping("/loan/{userName}/{loanId}/edit")
     public String editLoan(
       @PathVariable("userName") String userName,
-      @RequestParam("loan_id") Long loanId,
+      @PathVariable("loanId") Long loanId,
       Model model) {
 
         Loan loan = loanService.getLoanById(loanId);

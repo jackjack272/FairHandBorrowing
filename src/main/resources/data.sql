@@ -17,3 +17,11 @@ VALUES
     (3, 'PAY'),
     (4, 'LEND'),
     (5, 'RELEASE_HOLD');
+
+
+INSERT IGNORE INTO loan_status (loan_status_id, status_name)
+VALUES
+    (1, 'NOT_STARTED'),
+    (2, 'FULLY_FUNDED'),
+    (3, 'ACTIVE'),
+    (4, 'COMPLETED');

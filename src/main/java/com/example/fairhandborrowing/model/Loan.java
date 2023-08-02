@@ -36,6 +36,10 @@ public class Loan {
 
     private boolean isActive;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private LoanStatus loanStatus;
+
     @CreationTimestamp(source = SourceType.DB)
     private Date createdOn;
 

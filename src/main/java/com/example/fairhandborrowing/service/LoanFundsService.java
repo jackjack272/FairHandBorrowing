@@ -15,4 +15,6 @@ public interface LoanFundsService {
     void acceptFundRequest(Long fundLoanId, Double fundAmount);
 
     Double calculateLoanFundingProgress(LoanDto loanDto);
+
+    Double calculateTotalFunded(Long loanId);
 }

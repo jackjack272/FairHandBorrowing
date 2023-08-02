@@ -47,41 +47,45 @@
                   </div>
               </td>
               <td>
-                  <a class="btn btn-warning"
-                     th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
-                      <i class="fa fa-pencil"></i>
-                  </a>
-                  <a type="button" class="btn btn-success" th:href="@{/funds/{userName}/{loanId}/request(loanId=${loan.getId()}, userName=${user.getUserName()})}">
-                      <i class="fa fa-usd"></i>
-                  </a>
+<!--                  // request funds-->
+                  <form class="d-inline" role="form" method="get"
+                        th:action="@{/funds/{userName}/{loanId}/request(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                      <button type="submit" th:class="'btn ' + ${loan.getFundProgress() >= 100 ? 'btn-secondary' : 'btn-success'}"
+                              th:disabled="${loan.getFundProgress() >= 100}">
+                          <i class="fa fa-usd"></i>
+                      </button>
+                  </form>
 
-                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#archiveLoanModal" th:attrappend="data-target=${loan.id}">
+<!--                  // edit loan-->
+                  <form class="d-inline" role="form" method="get"
+                        th:action="@{/loan/{userName}/{loanId}/edit(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                      <button type="submit" th:class="'btn ' + ${loan.getFundProgress() > 0 ? 'btn-secondary' : 'btn-warning'}"
+                              th:disabled="${loan.getFundProgress() > 0}">
+                          <i class="fa fa-pencil"></i>
+                      </button>
+                  </form>
+
+<!--                  // archive loan-->
+                  <button th:disabled="${loan.getLoanStatus().getId() > 1}"
+                          type="button"
+                          th:class="'btn ' + ${loan.getLoanStatus().getStatusName() != 'NOT_STARTED' ? 'btn-secondary' : 'btn-danger'}"
+                          data-toggle="modal"
+                          data-target="#archiveLoanModal" th:attrappend="data-target=${loan.id}">
+                      <i class="fa fa-times"></i>
+                  </button>
+                  <div th:replace="~{fragments/archive_loan :: modal(loan=${loan}, user=${user})}"></div>
+
+<!--                  // sign contract-->
+                  <button th:if="${loan.getLoanStatus().getStatusName()} == 'FULLY_FUNDED'"
+                          type="button"
+                          th:class="'btn btn-primary'"
+                          data-toggle="modal"
+                          data-target="#signContractModal" th:attrappend="data-target=${loan.id}">
                       <i class="fa fa-times"></i>
                   </button>
 
-                  <!-- Archive Modal -->
-                  <div class="modal fade" id="archiveLoanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                       th:attrappend="id=${loan.id}">
-                      <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <h5 class="modal-title" id="exampleModalLabel">Archive Loan?</h5>
-                                  <button type="button" class="btn btn-close" data-dismiss="modal" />
-                              </div>
-                              <div class="modal-body">
-                                  <p th:text="'You are about to archive loan ID=' + ${loan.id} + '. Proceed?'"></p>
-                              </div>
-                              <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                  <form role="form" method="post"
-                                        style="display: inline"
-                                        th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
-                                      <button type="submit" class="btn btn-danger">Yes</button>
-                                  </form>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+
+                  <div th:if="${loan.getContract() != null}" th:replace="~{fragments/sign_contract :: modal(loan=${loan}, contract=${loan.getContract()}, user=${user})}"></div>
               </td>
           </tr>
           </tbody>
@@ -103,6 +107,7 @@
               <th scope="col">Item Condition</th>
               <th scope="col">Market Value</th>
               <th scope="col">Associated Loan ID</th>
+              <th scope="col">Actions</th>
           </tr>
           </thead>
           <tbody>
@@ -114,11 +119,16 @@
               <td th:text="${collateral.getItemCondition()}"></td>
               <td th:text="${collateral.getMarketValue()}"></td>
               <td th:text="${collateral.getLoan() != null} ? ${collateral.getLoan().getId()} : '-' "></td>
+              <td>
+                  <button th:disabled="${collateral.getLoan() != null}" type="button" th:class="'btn ' + ${collateral.getLoan() != null ? 'btn-secondary' : 'btn-danger'}" data-toggle="modal" data-target="#archiveCollateralModal" th:attrappend="data-target=${collateral.id}">
+                      <i class="fa fa-times"></i>
+                  </button>
+                  <div th:replace="~{fragments/delete_collateral :: modal(collateral=${collateral}, user=${user})}"/>
+              </td>
           </tr>
           </tbody>
       </table>
   </section>
 </main>
 </body>
-
 </html>

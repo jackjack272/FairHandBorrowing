@@ -1,6 +1,7 @@
 package com.example.fairhandborrowing.dto;
 
 import com.example.fairhandborrowing.model.Collateral;
+import com.example.fairhandborrowing.model.LoanStatus;
 import com.example.fairhandborrowing.model.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,8 @@ public class LoanDto {
 
     private boolean isActive;
 
+    private LoanStatus loanStatus;
+
     private Date createdOn;
 
     private UserEntity user;
@@ -38,4 +41,6 @@ public class LoanDto {
     private String collateralIdStr;
 
     private Integer fundProgress;
+
+    private ContractDto contract;
 }

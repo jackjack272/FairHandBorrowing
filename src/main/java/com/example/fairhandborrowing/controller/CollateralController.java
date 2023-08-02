@@ -46,4 +46,12 @@ public class CollateralController {
         return "redirect:/home";
     }
 
+    @PostMapping("/collateral/{userName}/{collateralId}/delete")
+    public String deleteCollateral(@PathVariable("userName") String userName,
+                                   @PathVariable("collateralId") Long collateralId) {
+
+        collateralService.deleteCollateral(collateralId);
+        return "redirect:/home";
+    }
+
 }

@@ -44,8 +44,8 @@ public class CollateralServiceImpl implements CollateralService {
     }
 
     @Override
-    public void deleteCollateral(long id) {
-        collateralRepository.deleteById(id);
+    public void deleteCollateral(Long collateralId) {
+        collateralRepository.deleteById(collateralId);
     }
 
     @Override

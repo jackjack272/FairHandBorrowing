@@ -11,6 +11,7 @@ public interface LoanFundsRepository extends JpaRepository<LoanFunds, Long> {
 
     List<LoanFunds> findByAcceptedAndLender(boolean accepted, UserEntity user);
 
-    List<LoanFunds> findByLoan(Loan loan);
     List<LoanFunds> findByLoanId(Long loan_id);
+
+    List<LoanFunds> findByAcceptedAndLoanId(boolean accepted, Long loan_id);
 }

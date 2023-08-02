@@ -1,16 +1,14 @@
 package com.example.fairhandborrowing.service.implement;
 
+import com.example.fairhandborrowing.dto.ContractDto;
 import com.example.fairhandborrowing.dto.LoanDto;
-import com.example.fairhandborrowing.model.Collateral;
-import com.example.fairhandborrowing.model.Loan;
-import com.example.fairhandborrowing.model.LoanFunds;
-import com.example.fairhandborrowing.model.UserEntity;
-import com.example.fairhandborrowing.repository.CollateralRepository;
-import com.example.fairhandborrowing.repository.LoanRepository;
-import com.example.fairhandborrowing.repository.UserRepository;
+import com.example.fairhandborrowing.model.*;
+import com.example.fairhandborrowing.model.constants.Constants;
+import com.example.fairhandborrowing.repository.*;
 import com.example.fairhandborrowing.service.LoanFundsService;
 import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.mapper.LoanMapper;
+import groovy.util.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +35,12 @@ public class LoanServiceImpl implements LoanService {
 
     @Autowired
     private LoanFundsService loanFundsService;
+
+    @Autowired
+    private LoanStatusRepository loanStatusRepository;
+
+    @Autowired
+    private LoanFundsRepository loanFundsRepository;
 
     @Override
     public List<Loan> getAllLoansByUserId(Long userId) {
@@ -63,6 +66,7 @@ public class LoanServiceImpl implements LoanService {
         UserEntity user = userRepository.findFirstByUsername(userName);
         Loan loan = LoanMapper.mapToModel(loanDto);
         loan.setUser(user);
+        loan.setLoanStatus(loanStatusRepository.findLoanStatusByStatusName(Constants.NOT_STARTED));
         loanRepository.save(loan);
 
         List<Collateral> collaterals = loan.getCollaterals();
@@ -121,13 +125,44 @@ public class LoanServiceImpl implements LoanService {
             loanDto.getCollaterals().stream().forEach(collateral -> {
                 colIdStrBuilder.append(collateral.getItemName()).append(", ");
             });
-            loanDto.setCollateralIdStr(colIdStrBuilder.toString().substring(0, colIdStrBuilder.length() - 2));
-        });
+            if(loanDto.getCollaterals() == null || loanDto.getCollaterals().size() == 0)
+                loanDto.setCollateralIdStr("-");
+            else
+                loanDto.setCollateralIdStr(colIdStrBuilder.toString().substring(0, colIdStrBuilder.length() - 2));
 
-        loanDtos.stream().forEach(loanDto -> {
             Double fundProgress = loanFundsService.calculateLoanFundingProgress(loanDto);
             loanDto.setFundProgress((int) Math.round(fundProgress * 100));
-        });
 
+            // prepare contract info
+            if(loanDto.getLoanStatus().getStatusName().equals(Constants.FULLY_FUNDED)) {
+                loanDto.setContract(prepareContractDto(loanDto));
+            }
+        });
+    }
+
+    private ContractDto prepareContractDto(LoanDto loanDto) {
+        ContractDto.ContractDtoBuilder contractDtoBuilder = ContractDto.builder();
+        contractDtoBuilder.borrowerNameAddress(loanDto.getUser().getFirstName() + " \n" +
+                loanDto.getUser().getLastName() + " " +
+                "123 St. Royal Ave. New West, BC");
+        List<String> lenderDetails = new ArrayList<>();
+        List<Double> fundAmountDetails = new ArrayList<>();
+        List<Contract> contractDetails = new ArrayList<>();
+
+        List<LoanFunds> lfs = loanFundsRepository.findByLoanId(loanDto.getId());
+        lfs.stream().forEach(lf -> {
+            UserEntity lender = lf.getLender();
+            lenderDetails.add(lender.getFirstName() + " " + lender.getLastName() + " \n" +
+                    "123 St. Royal Ave. New West, BC" );
+            fundAmountDetails.add(lf.getFundAmount());
+            contractDetails.add(lf.getContract());
+        });
+        contractDtoBuilder.lenderNameAddress(lenderDetails);
+        contractDtoBuilder.lenderFundAmount(fundAmountDetails);
+        contractDtoBuilder.interestRate(loanDto.getInterestRate());
+        contractDtoBuilder.term(loanDto.getMonthsToPay());
+        contractDtoBuilder.startDate(contractDetails.get(0).getCreatedOn().toString());
+
+        return contractDtoBuilder.build();
     }
 }

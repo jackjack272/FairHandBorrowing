@@ -25,4 +25,8 @@ public class LoanFunds {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "loan_id")
     private Loan loan;
+
+    @OneToOne(cascade = CascadeType.ALL, optional = true)
+    @JoinColumn(name = "contract_id", referencedColumnName = "contract_id")
+    private Contract contract;
 }
