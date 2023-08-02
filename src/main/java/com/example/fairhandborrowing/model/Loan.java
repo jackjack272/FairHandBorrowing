@@ -51,4 +51,8 @@ public class Loan {
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.MERGE)
     private List<LoanFunds> loanFunds;
+
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.MERGE)
+    private List<Transaction> transactions;
+
 }

@@ -15,4 +15,6 @@ public interface UserService {
 
     List<UserEntity> findAllByType(ProfileType profileType);
 
+    void updateUser(UserEntity userEntity);
+
 }

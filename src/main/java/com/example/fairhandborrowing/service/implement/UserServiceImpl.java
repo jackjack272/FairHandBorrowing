@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,8 @@ public class UserServiceImpl implements UserService {
         UserEntity user = UserMapper.mapToModel(registrationDto);
         user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         user.setProfileType(profileTypeRepository.findProfileTypeByTypeName(registrationDto.getProfileType()));
+        user.setAvailableFunds(BigDecimal.ZERO);
+        user.setFundsOnHold(BigDecimal.ZERO);
 
         Role role = roleRepository.findByName(USER_ROLE);
 
@@ -67,5 +70,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserEntity> findAllByType(ProfileType type) {
         return userRepository.findAllByProfileType(type);
+    }
+
+    @Override
+    public void updateUser(UserEntity userEntity) {
+        userRepository.save(userEntity);
     }
 }

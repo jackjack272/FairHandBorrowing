@@ -3,6 +3,7 @@ package com.example.fairhandborrowing.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +26,20 @@ public class UserEntity {
     private String password;
     private Date dob;
 
+    @Column(columnDefinition="Decimal(10,2) default '0.00'")
+    private BigDecimal availableFunds = BigDecimal.ZERO;
+
+    @Column(columnDefinition="Decimal(10,2) default '0.00'")
+    private BigDecimal FundsOnHold = BigDecimal.ZERO;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
     joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "userId")},
     inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_type", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
     private ProfileType profileType;
 
     @OneToMany(mappedBy = "user")

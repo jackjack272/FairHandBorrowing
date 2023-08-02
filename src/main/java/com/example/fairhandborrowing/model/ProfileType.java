@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +17,8 @@ public class ProfileType {
     private Long id;
 
     private String typeName;
+
+    @OneToMany(mappedBy="profileType", cascade = CascadeType.MERGE)
+    private List<UserEntity> user;
 
 }
