@@ -70,7 +70,7 @@ public class HomeController {
         List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
         List<LoanDto> loanDtos = new ArrayList<>();
 
-        loanService.prepareDtos(loanDtos, loans);
+        loanService.prepareDtos(loanDtos, loans, userEntity);
 
         model.addAttribute("collaterals", collaterals);
         model.addAttribute("loans", loanDtos);

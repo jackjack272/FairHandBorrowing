@@ -41,6 +41,8 @@ public class LoanServiceImpl implements LoanService {
 
     @Autowired
     private LoanFundsRepository loanFundsRepository;
+    @Autowired
+    private ContractRepository contractRepository;
 
     @Override
     public List<Loan> getAllLoansByUserId(Long userId) {
@@ -114,7 +116,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public void prepareDtos(List<LoanDto> loanDtos, List<Loan> loans) {
+    public void prepareDtos(List<LoanDto> loanDtos, List<Loan> loans, UserEntity user) {
         loans.stream().forEach(loan -> {
             LoanDto dto = LoanMapper.mapToDto(loan);
             loanDtos.add(dto);
@@ -135,34 +137,44 @@ public class LoanServiceImpl implements LoanService {
 
             // prepare contract info
             if(loanDto.getLoanStatus().getStatusName().equals(Constants.FULLY_FUNDED)) {
-                loanDto.setContract(prepareContractDto(loanDto));
+                loanDto.setContract(prepareContractDto(loanDto, user));
             }
         });
     }
 
-    private ContractDto prepareContractDto(LoanDto loanDto) {
+    private ContractDto prepareContractDto(LoanDto loanDto, UserEntity user) {
         ContractDto.ContractDtoBuilder contractDtoBuilder = ContractDto.builder();
-        contractDtoBuilder.borrowerNameAddress(loanDto.getUser().getFirstName() + " \n" +
-                loanDto.getUser().getLastName() + " " +
-                "123 St. Royal Ave. New West, BC");
+        contractDtoBuilder.borrowerNameAddress("(Name) " + loanDto.getUser().getFirstName().toUpperCase() + " \n" +
+                loanDto.getUser().getLastName().toUpperCase() + " " +
+                "(Address) 123 St. Royal Ave. New West, BC");
         List<String> lenderDetails = new ArrayList<>();
-        List<Double> fundAmountDetails = new ArrayList<>();
+        List<String> fundAmountDetails = new ArrayList<>();
         List<Contract> contractDetails = new ArrayList<>();
 
-        List<LoanFunds> lfs = loanFundsRepository.findByLoanId(loanDto.getId());
+        List<LoanFunds> lfs = loanFundsRepository.findByAcceptedAndLoanId(true, loanDto.getId());
         lfs.stream().forEach(lf -> {
             UserEntity lender = lf.getLender();
-            lenderDetails.add(lender.getFirstName() + " " + lender.getLastName() + " \n" +
-                    "123 St. Royal Ave. New West, BC" );
-            fundAmountDetails.add(lf.getFundAmount());
+            lenderDetails.add("(Name) " + lender.getFirstName().toUpperCase() + " " + lender.getLastName().toUpperCase() + " \n" +
+                    "(Address) 123 St. Royal Ave. New West, BC" + " (Username) @" + lender.getUsername());
+            fundAmountDetails.add("Amount owed to @" + lender.getUsername() + " : " + lf.getFundAmount());
             contractDetails.add(lf.getContract());
+
+
         });
         contractDtoBuilder.lenderNameAddress(lenderDetails);
         contractDtoBuilder.lenderFundAmount(fundAmountDetails);
         contractDtoBuilder.interestRate(loanDto.getInterestRate());
         contractDtoBuilder.term(loanDto.getMonthsToPay());
         contractDtoBuilder.startDate(contractDetails.get(0).getCreatedOn().toString());
+        contractDtoBuilder.contracts(contractDetails);
 
+        if(user.getProfileType().getTypeName().equals("LENDER")) {
+            Contract c = loanFundsRepository.findByLenderAndAcceptedAndLoanId(user, true, loanDto.getId()).get(0).getContract();
+            contractDtoBuilder.signed(c.isLenderSigned());
+        } else {
+            Contract c = loanFundsRepository.findByBorrowerAndAcceptedAndLoanId(user, true, loanDto.getId()).get(0).getContract();;
+            contractDtoBuilder.signed(c.isBorrowerSigned());
+        }
         return contractDtoBuilder.build();
     }
 }

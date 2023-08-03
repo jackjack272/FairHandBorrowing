@@ -2,6 +2,7 @@ package com.example.fairhandborrowing.service;
 
 import com.example.fairhandborrowing.dto.LoanDto;
 import com.example.fairhandborrowing.model.Loan;
+import com.example.fairhandborrowing.model.UserEntity;
 
 import java.util.List;
 
@@ -18,5 +19,5 @@ public interface LoanService {
 
     void archiveLoan(Long loanId);
 
-    void prepareDtos(List<LoanDto> loanDtos, List<Loan> loans);
+    void prepareDtos(List<LoanDto> loanDtos, List<Loan> loans, UserEntity user);
 }

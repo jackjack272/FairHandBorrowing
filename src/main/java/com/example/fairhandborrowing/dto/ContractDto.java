@@ -1,5 +1,6 @@
 package com.example.fairhandborrowing.dto;
 
+import com.example.fairhandborrowing.model.Contract;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,11 +16,15 @@ public class ContractDto {
 
     private String borrowerNameAddress;
     private List<String> lenderNameAddress;
-    private List<Double> lenderFundAmount;
+    private List<String> lenderFundAmount;
 
     private Double interestRate;
 
     private Integer term;
 
     private String startDate;
+
+    private List<Contract> contracts;
+
+    private boolean signed;
 }

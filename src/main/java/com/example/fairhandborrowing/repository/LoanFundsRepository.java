@@ -1,5 +1,6 @@
 package com.example.fairhandborrowing.repository;
 
+import com.example.fairhandborrowing.model.Contract;
 import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.model.LoanFunds;
 import com.example.fairhandborrowing.model.UserEntity;
@@ -14,4 +15,7 @@ public interface LoanFundsRepository extends JpaRepository<LoanFunds, Long> {
     List<LoanFunds> findByLoanId(Long loan_id);
 
     List<LoanFunds> findByAcceptedAndLoanId(boolean accepted, Long loan_id);
+
+    List<LoanFunds> findByLenderAndAcceptedAndLoanId(UserEntity lender, boolean accepted, Long loan_id);
+    List<LoanFunds> findByBorrowerAndAcceptedAndLoanId(UserEntity borrower, boolean accepted, Long loan_id);
 }

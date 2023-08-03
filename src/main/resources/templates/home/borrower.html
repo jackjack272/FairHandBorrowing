@@ -28,7 +28,7 @@
               <th scope="col">Term (in Mos)</th>
               <th scope="col">Collateral</th>
               <th scope="col">Funding Status</th>
-              <th scope="col">Actions</th>
+              <th scope="col" class="w-25">Actions</th>
           </tr>
           </thead>
           <tbody>
@@ -73,18 +73,16 @@
                           data-target="#archiveLoanModal" th:attrappend="data-target=${loan.id}">
                       <i class="fa fa-times"></i>
                   </button>
-                  <div th:replace="~{fragments/archive_loan :: modal(loan=${loan}, user=${user})}"></div>
 
 <!--                  // sign contract-->
                   <button th:if="${loan.getLoanStatus().getStatusName()} == 'FULLY_FUNDED'"
                           type="button"
-                          th:class="'btn btn-primary'"
+                          class="btn btn-primary"
                           data-toggle="modal"
                           data-target="#signContractModal" th:attrappend="data-target=${loan.id}">
-                      <i class="fa fa-times"></i>
+                      <i class="fa fa-file-contract"></i>
                   </button>
-
-
+                  <div th:replace="~{fragments/archive_loan :: modal(loan=${loan}, user=${user})}"></div>
                   <div th:if="${loan.getContract() != null}" th:replace="~{fragments/sign_contract :: modal(loan=${loan}, contract=${loan.getContract()}, user=${user})}"></div>
               </td>
           </tr>
