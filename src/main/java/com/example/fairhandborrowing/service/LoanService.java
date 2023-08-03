@@ -11,6 +11,8 @@ public interface LoanService {
 
     List<Loan> getAllNonArchivedLoansByUserId(Long userId);
 
+    List<Loan> getAllCompletedAndArchivedLoansByUserId(Long userId);
+
     Loan getLoanById(Long loanId);
 
     void createLoan(String userName, LoanDto loanDto);

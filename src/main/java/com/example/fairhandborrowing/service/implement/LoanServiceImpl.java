@@ -8,12 +8,15 @@ import com.example.fairhandborrowing.repository.*;
 import com.example.fairhandborrowing.service.LoanFundsService;
 import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.mapper.LoanMapper;
+import com.example.fairhandborrowing.service.TransactionService;
 import groovy.util.ObservableList;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -41,8 +44,15 @@ public class LoanServiceImpl implements LoanService {
 
     @Autowired
     private LoanFundsRepository loanFundsRepository;
+
     @Autowired
     private ContractRepository contractRepository;
+
+    @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
+    private TransactionTypeRepository transactionTypeRepository;
 
     @Override
     public List<Loan> getAllLoansByUserId(Long userId) {
@@ -57,6 +67,16 @@ public class LoanServiceImpl implements LoanService {
         List<Loan> filteredLoans = loans.stream().filter(loan -> !loan.isArchived()).collect(Collectors.toList());
         return filteredLoans;
     }
+
+    @Override
+    public List<Loan> getAllCompletedAndArchivedLoansByUserId(Long userId) {
+        List<Loan> loans = getAllLoansByUserId(userId);
+
+        List<Loan> filteredLoans = loans.stream().filter(loan -> loan.isArchived() ||
+                (loan.getLoanStatus().getStatusName().equalsIgnoreCase(Constants.COMPLETED)
+                || loan.getLoanStatus().getStatusName().equalsIgnoreCase(Constants.CANCELLED)))
+                .collect(Collectors.toList());
+        return filteredLoans;    }
 
     @Override
     public Loan getLoanById(Long loanId) {
@@ -102,9 +122,11 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    @Transactional
     public void archiveLoan(Long loanId) {
         Loan loan = loanRepository.findById(loanId).get();
         loan.setArchived(true);
+        loan.setLoanStatus(loanStatusRepository.findLoanStatusByStatusName(Constants.CANCELLED));
         List<Collateral> collaterals = loan.getCollaterals();
 
         collaterals.stream().forEach(collateral -> {
@@ -113,6 +135,21 @@ public class LoanServiceImpl implements LoanService {
         });
         loan.setCollaterals(null);
         loanRepository.save(loan);
+
+        loan.getLoanFunds().stream()
+                .filter(LoanFunds::isAccepted)
+                .forEach(loanFund -> {
+                    UserEntity loanOwner = loan.getUser();
+                    loanOwner.setFundsOnHold(loan.getUser().getFundsOnHold().subtract(BigDecimal.valueOf(loanFund.getFundAmount())));
+                    userRepository.save(loanOwner);
+
+                    UserEntity lender = loanFund.getLender();
+                    lender.setFundsOnHold(lender.getFundsOnHold().subtract(BigDecimal.valueOf(loanFund.getFundAmount())));
+                    lender.setAvailableFunds(lender.getAvailableFunds().add(BigDecimal.valueOf(loanFund.getFundAmount())));
+                    userRepository.save(lender);
+
+                    transactionService.sendMoneyUserToUser(loanOwner, lender, BigDecimal.valueOf(loanFund.getFundAmount()), loan, transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_RETURNED_CANCELLED));
+                });
     }
 
     @Override

@@ -23,6 +23,7 @@ public class ContractServiceImpl implements ContractService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Override
     public void signContract(String userName, Long loanId) {
         List<LoanFunds> loanFunds = loanFundsRepository.findByAcceptedAndLoanId(true, loanId);

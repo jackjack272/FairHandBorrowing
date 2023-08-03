@@ -126,6 +126,38 @@
           </tr>
           </tbody>
       </table>
+
+      <div class="d-flex justify-content-between flex-row my-2">
+          <h4 class="fw-bolder">Loans History</h4>
+      </div>
+      <div th:if="${loans_history.isEmpty()}">NO HISTORY</div>
+
+      <table class="table table-striped table-hover" th:if="${!loans_history.isEmpty()}">
+          <thead class="table-dark">
+          <tr>
+              <th scope="col">Loan ID</th>
+              <th scope="col">Loan Status</th>
+              <th scope="col">Created On</th>
+              <th scope="col">Total Amount</th>
+              <th scope="col">Interest Rate</th>
+              <th scope="col">Description</th>
+              <th scope="col">Term (in Mos)</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="loan : ${loans_history}">
+              <td th:text="${loan.getId()}"></td>
+              <td>
+                  <span class="badge rounded-pill text-bg-secondary" th:text="${loan.getLoanStatus().getStatusName()}" />
+              </td>
+              <td th:text="${loan.getCreatedOn()}"></td>
+              <td th:text="${loan.getAmountBorrowed()}"></td>
+              <td th:text="${loan.getInterestRate()}"></td>
+              <td th:text="${loan.getDescription()}"></td>
+              <td th:text="${loan.getMonthsToPay()}"></td>
+          </tr>
+          </tbody>
+      </table>
   </section>
 </main>
 </body>

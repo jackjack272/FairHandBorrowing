@@ -16,6 +16,8 @@ public class LoanFunds {
 
     private boolean accepted;
 
+    private boolean rejected;
+
     @ManyToOne
     private UserEntity borrower;
 

@@ -1,8 +1,10 @@
 package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.model.Loan;
+import com.example.fairhandborrowing.model.LoanFunds;
 import com.example.fairhandborrowing.model.ProfileType;
 import com.example.fairhandborrowing.model.UserEntity;
+import com.example.fairhandborrowing.repository.LoanFundsRepository;
 import com.example.fairhandborrowing.security.SecurityUtil;
 import com.example.fairhandborrowing.service.LoanFundsService;
 import com.example.fairhandborrowing.service.LoanService;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping
@@ -34,6 +37,8 @@ public class FundsController {
 
     @Autowired
     private LoanFundsService loanFundsService;
+    @Autowired
+    private LoanFundsRepository loanFundsRepository;
 
     @GetMapping("/funds/{userName}/{loanId}/request")
     public String createReqFundsPage(@PathVariable("userName") String userName, @PathVariable("loanId") Long loanId, Model model) {
@@ -42,6 +47,14 @@ public class FundsController {
         ProfileType profileType = profileTypeService.getProfileByType(LENDER_VALUE);
         Loan loan = loanService.getLoanById(loanId);
         List<UserEntity> lenders = userService.findAllByType(profileType);
+
+        List<UserEntity> existingLoanLenders = loanFundsRepository.findByLoanId(loanId).stream().map(lf -> {
+            return lf.getLender();
+        }).collect(Collectors.toList());
+
+
+        lenders = lenders.stream().filter(lender ->!existingLoanLenders.contains(lender)).collect(Collectors.toList());
+
         model.addAttribute("userName", userName);
         model.addAttribute("loan", loan);
         model.addAttribute("lenders", lenders);
@@ -76,4 +89,17 @@ public class FundsController {
         loanFundsService.acceptFundRequest(fundLoanId, fundAmount);
         return "redirect:/home";
     }
+
+    @PostMapping("/funds/{userName}/{fundLoanId}/rejection")
+    public String rejectFunds(@PathVariable("userName") String username,
+                              @PathVariable("fundLoanId") Long fundLoanId) {
+        String loggedUsername = SecurityUtil.getSessionUser();
+
+        if(loggedUsername.equalsIgnoreCase(username)) {
+            loanFundsService.rejectFundRequest(fundLoanId);
+        }
+
+        return "redirect:/home";
+    }
+
 }

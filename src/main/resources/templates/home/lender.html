@@ -11,38 +11,49 @@
 <main class="flex-shrink-0">
 
     <section layout:fragment="body" class="mx-auto" style="width: 80vw">
-        <div class="text-center mb-5">
+        <div class="d-flex justify-content-between flex-row my-2">
             <h3 class="fw-bolder">Pending Fund Requests</h3>
         </div>
         <div th:if="${fundRequests.isEmpty()}">NO AVAILABLE FUNDING REQUESTS</div>
 
         <table class="table table-striped table-hover" th:if="${!fundRequests.isEmpty()}">
-            <thead class="thead-dark">
+            <thead class="table-dark">
             <tr>
                 <th scope="col">#</th>
+                <th scope="col">Loan #</th>
                 <th scope="col">Borrower's Name</th>
                 <th scope="col">Total Amount</th>
                 <th scope="col">Interest Rate</th>
                 <th scope="col">Months To Pay</th>
                 <th scope="col">Description</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="fundRequest : ${fundRequests}">
-                <td th:text="${fundRequest.getLoan().getId()}"></td>
-                <td th:text="${fundRequest.getLoan().getUser().getUsername() + ' ' + fundRequest.getLoan().getUser().getLastName()}"></td>
-                <td th:text="${fundRequest.getLoan().getAmountBorrowed()}"></td>
-                <td th:text="${fundRequest.getLoan().getInterestRate()}"></td>
-                <td th:text="${fundRequest.getLoan().getMonthsToPay()}"></td>
-                <td>To Do Description</td>
+                <td th:text="${fundRequest.getLoanFund().getLoanFundId()}"></td>
+                <td th:text="${fundRequest.getLoanFund().getLoan().getId()}"></td>
+                <td th:text="${fundRequest.getLoanFund().getLoan().getUser().getUsername() + ' ' + fundRequest.getLoanFund().getLoan().getUser().getLastName()}"></td>
+                <td th:text="${fundRequest.getLoanFund().getLoan().getAmountBorrowed()}"></td>
+                <td th:text="${fundRequest.getLoanFund().getLoan().getInterestRate()}"></td>
+                <td th:text="${fundRequest.getLoanFund().getLoan().getMonthsToPay()}"></td>
+                <td th:text="${fundRequest.getLoanFund().getLoan().getDescription()}"></td>
                 <td>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptFundingModal" th:attrappend="data-target=${fundRequest.getLoan().getId()}">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptFundingModal" th:attrappend="data-target=${fundRequest.getLoanFund().getLoan().getId()}">
                         <i class="fa fa-check"></i>
+                    </button>
+
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            data-toggle="modal"
+                            data-target="#rejectFundingModal" th:attrappend="data-target=${fundRequest.getLoanFund().getLoanFundId()}">
+                        <i class="fa fa-times"></i>
                     </button>
 
                     <!-- Accept Funding Request Modal -->
                     <div class="modal fade" id="acceptFundingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                         th:attrappend="id=${fundRequest.getLoan().getId()}">
+                         th:attrappend="id=${fundRequest.getLoanFund().getLoan().getId()}">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -51,17 +62,19 @@
                                 </div>
                                 <form class="needs-validation" novalidate
                                       method="post"
-                                      th:action="@{/funds/{userName}/{fundLoanId}/acceptance(userName=${user.getUserName()}, fundLoanId=${fundRequest.getLoanFundId()})}"
+                                      th:action="@{/funds/{userName}/{fundLoanId}/acceptance(userName=${user.getUserName()}, fundLoanId=${fundRequest.getLoanFund().getLoanFundId()})}"
                                 >
                                     <div class="modal-body">
                                         <p th:text="'Enter the fund amount you would lend. Note that this is going to be deducted from your vault upon acceptance.'" />
                                         <div class="form-row">
-                                            <label for="fundAmount">Fund Amount</label>
+                                            <label th:text="'Available Funds: ' + ${available_funds}"/>
+                                            <label th:text="'Remaining fund required: ' + ${fundRequest.getRemainingFundsRequired()}"/>
+                                            <label for="fundAmount">Fund Amount.</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="inputGroupPrepend">$</span>
                                                 </div>
-                                                <input type="number" name="fundAmount" step="0.01" min="20" max="1000" class="form-control" id="fundAmount" placeholder="Enter Fund Amount" aria-describedby="inputGroupPrepend" required>
+                                                <input type="number" name="fundAmount" step="0.01" th:min="0.01" th:max="${available_funds > 0 && available_funds > fundRequest.getRemainingFundsRequired() ? fundRequest.getRemainingFundsRequired() : available_funds}" class="form-control" id="fundAmount" placeholder="Enter Fund Amount" aria-describedby="inputGroupPrepend" required>
                                                 <div class="invalid-feedback">
                                                     Please enter a valid fund amount.
                                                 </div>
@@ -70,7 +83,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-danger">Accept Loan Request</button>
+                                        <button type="submit" class="btn btn-danger" th:disabled="${available_funds == 0}">Accept Loan Request</button>
                                     </div>
                                 </form>
                                 <script>
@@ -96,11 +109,89 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Reject Funding Modal -->
+                    <div class="modal fade" id="rejectFundingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                         th:attrappend="id=${fundRequest.getLoanFund().getLoanFundId()}">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Reject Funding Request?</h5>
+                                    <button type="button" class="btn btn-close" data-dismiss="modal" />
+                                </div>
+                                <div class="modal-body">
+                                    <p th:text="'You are about to reject funding request with ID=' + ${fundRequest.getLoanFund().getLoanFundId()} + '. Proceed?'"></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form role="form" method="post"
+                                          style="display: inline"
+                                          th:action="@{/funds/{userName}/{fundLoanId}/rejection(userName=${user.getUserName()}, fundLoanId=${fundRequest.getLoanFund().getLoanFundId()})}">
+                                        <button type="submit" class="btn btn-danger">Yes</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
             </tbody>
         </table>
         <br>
+
+        <div class="d-flex justify-content-between flex-row my-2">
+            <h4 class="fw-bolder">Loans</h4>
+        </div>
+        <div th:if="${loans.isEmpty()}">NO AVAILABLE LOANS</div>
+
+        <table class="table table-striped table-hover" th:if="${!loans.isEmpty()}">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">Loan ID</th>
+                <th scope="col">Loan Status</th>
+                <th scope="col">Created On</th>
+                <th scope="col">Total Amount</th>
+                <th scope="col">Interest Rate</th>
+                <th scope="col">Description</th>
+                <th scope="col">Term (in Mos)</th>
+                <th scope="col">Funding Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="loan : ${loans}">
+                <td th:text="${loan.getId()}"></td>
+                <td>
+                    <span class="badge rounded-pill text-bg-secondary" th:text="${loan.getLoanStatus().getStatusName()}" />
+                </td>
+                <td th:text="${loan.getCreatedOn()}"></td>
+                <td th:text="${loan.getAmountBorrowed()}"></td>
+                <td th:text="${loan.getInterestRate()}"></td>
+                <td th:text="${loan.getDescription()}"></td>
+                <td th:text="${loan.getMonthsToPay()}"></td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" th:style="${'width: ' + loan.getFundProgress() + '%;'}" aria-valuemin="0" aria-valuemax="100"
+                             th:text="${loan.getFundProgress() + '%'}"></div>
+                    </div>
+                </td>
+                <td>
+
+                    <!--                  // sign contract-->
+                    <button th:if="${loan.getLoanStatus().getStatusName()} == 'FULLY_FUNDED'"
+                            type="button"
+                            th:class="'btn btn-primary'"
+                            data-toggle="modal"
+                            data-target="#signContractModal" th:attrappend="data-target=${loan.id}">
+                        <i class="fa fa-times"></i>
+                    </button>
+
+
+                    <div th:if="${loan.getContract() != null}" th:replace="~{fragments/sign_contract :: modal(loan=${loan}, contract=${loan.getContract()}, user=${user})}"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </section>
 </main>
 </body>

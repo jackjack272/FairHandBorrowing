@@ -2,6 +2,7 @@ package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.CollateralDto;
 import com.example.fairhandborrowing.dto.LoanDto;
+import com.example.fairhandborrowing.dto.LoanFundDto;
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
 import com.example.fairhandborrowing.mapper.LoanMapper;
 import com.example.fairhandborrowing.mapper.UserMapper;
@@ -22,8 +23,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping
@@ -69,17 +72,39 @@ public class HomeController {
         List<Collateral> collaterals = collateralService.findAllCollaterals();
         List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
         List<LoanDto> loanDtos = new ArrayList<>();
-
         loanService.prepareDtos(loanDtos, loans, userEntity);
+
+        List<Loan> historyLoans = loanService.getAllCompletedAndArchivedLoansByUserId(user.getId());
+        List<LoanDto> loanHistoryDtos = new ArrayList<>();
+        loanService.prepareDtos(loanHistoryDtos, historyLoans, userEntity);
+
 
         model.addAttribute("collaterals", collaterals);
         model.addAttribute("loans", loanDtos);
+        model.addAttribute("loans_history", loanHistoryDtos);
         return "home/borrower";
       } else {
           List<LoanFunds> fundRequests = loanFundsService.getPendingRequestsForUser(userEntity);
-          model.addAttribute("fundRequests", fundRequests);
-          model.addAttribute("loans", new ArrayList<>());
-          model.addAttribute("loanHistory", new ArrayList<>());
+
+          List<LoanFundDto> loanFundDtos = new ArrayList<>();
+
+          fundRequests.stream().forEach(fundRequest -> {
+              Loan loan = loanService.getLoanById(fundRequest.getLoan().getId());
+              Double totalFunded = loanFundsService.calculateTotalFunded(fundRequest.getLoan().getId());
+
+              LoanFundDto.LoanFundDtoBuilder dto = LoanFundDto.builder();
+              dto.loanFund(fundRequest);
+              dto.remainingFundsRequired(loan.getAmountBorrowed() - totalFunded);
+
+              loanFundDtos.add(dto.build());
+          });
+
+          List<Loan> acceptedLoans = loanFundsService.getAcceptedRequestsForUser(userEntity).stream().map(loanFund -> loanFund.getLoan()).collect(Collectors.toList());
+          List<LoanDto> loanDtos = new ArrayList<>();
+          loanService.prepareDtos(loanDtos, acceptedLoans, userEntity);
+          model.addAttribute("available_funds", userEntity.getAvailableFunds().doubleValue());
+          model.addAttribute("fundRequests", loanFundDtos);
+          model.addAttribute("loans", loanDtos);
           return "home/lender";
       }
     }

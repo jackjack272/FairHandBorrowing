@@ -5,6 +5,9 @@ import com.example.fairhandborrowing.model.*;
 import com.example.fairhandborrowing.model.constants.Constants;
 import com.example.fairhandborrowing.repository.*;
 import com.example.fairhandborrowing.service.LoanFundsService;
+import com.example.fairhandborrowing.service.TransactionService;
+import com.example.fairhandborrowing.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +22,6 @@ public class LoanFundsServiceImpl implements LoanFundsService {
     private LoanFundsRepository loanFundsRepository;
 
     @Autowired
-    private TransactionRepository transactionRepository;
-
-    @Autowired
     private TransactionTypeRepository transactionTypeRepository;
 
     @Autowired
@@ -31,7 +31,10 @@ public class LoanFundsServiceImpl implements LoanFundsService {
     private LoanRepository loanRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private TransactionService transactionService;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public void sendFundRequest(UserEntity borrower, UserEntity lender, Loan loan) {
@@ -40,6 +43,7 @@ public class LoanFundsServiceImpl implements LoanFundsService {
         fund.setLender(lender);
         fund.setLoan(loan);
         fund.setAccepted(false);
+        fund.setRejected(false);
         fund.setFundAmount(0.0);
 
         loanFundsRepository.save(fund);
@@ -47,10 +51,11 @@ public class LoanFundsServiceImpl implements LoanFundsService {
 
     @Override
     public List<LoanFunds> getPendingRequestsForUser(UserEntity user) {
-        return loanFundsRepository.findByAcceptedAndLender(false, user);
+        return loanFundsRepository.findByAcceptedAndLenderAndRejected(false, user, false);
     }
 
     @Override
+    @Transactional
     public void acceptFundRequest(Long fundLoanId, Double fundAmount) {
         LoanFunds loanFunds = loanFundsRepository.findById(fundLoanId).get();
         loanFunds.setAccepted(true);
@@ -61,19 +66,15 @@ public class LoanFundsServiceImpl implements LoanFundsService {
         UserEntity lender = loanFunds.getLender();
         lender.setAvailableFunds(lender.getAvailableFunds().subtract(BigDecimal.valueOf(fundAmount)));
         lender.setFundsOnHold(lender.getFundsOnHold().add(BigDecimal.valueOf(fundAmount)));
-        userRepository.save(lender);
+        userService.updateUser(lender);
 
         UserEntity borrower = loanFunds.getBorrower();
         borrower.setFundsOnHold(borrower.getFundsOnHold().add(BigDecimal.valueOf(fundAmount)));
-        userRepository.save(borrower);
+        userService.updateUser(borrower);
 
-        Transaction.TransactionBuilder transactionBuilder = Transaction.builder();
-        transactionBuilder.transactionType(transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_LEND));
-        transactionBuilder.initiator(lender);
-        transactionBuilder.recipient(borrower);
-        transactionBuilder.amount(BigDecimal.valueOf(fundAmount));
-        transactionBuilder.loan(loan);
-        transactionRepository.save(transactionBuilder.build());
+
+        transactionService.sendMoneyUserToUser(lender, borrower, BigDecimal.valueOf(fundAmount), loan,
+                transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_LEND));
         loanFundsRepository.save(loanFunds);
 
         // check if loan is fully funded then release hold
@@ -84,16 +85,10 @@ public class LoanFundsServiceImpl implements LoanFundsService {
             BigDecimal transferFundToAvailable = BigDecimal.valueOf(totalFunded);
             borrower.setFundsOnHold(borrower.getFundsOnHold().subtract(transferFundToAvailable));
             borrower.setAvailableFunds(borrower.getAvailableFunds().add(transferFundToAvailable));
-            userRepository.save(borrower);
+            userService.updateUser(borrower);
 
-            Transaction.TransactionBuilder bTransactionBuilder = Transaction.builder();
-            bTransactionBuilder.transactionType(transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_RELEASE_HOLD));
-            bTransactionBuilder.initiator(null);
-            bTransactionBuilder.recipient(borrower);
-            bTransactionBuilder.amount(transferFundToAvailable);
-            bTransactionBuilder.loan(loan);
-            transactionRepository.save(bTransactionBuilder.build());
-
+            transactionService.sendMoneyUserToUser(null, borrower, transferFundToAvailable, loan,
+                    transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_RELEASE_HOLD));
 
             List<LoanFunds> lfs = loanFundsRepository.findByLoanId(loan.getId());
             lfs.stream().forEach(lf -> {
@@ -101,15 +96,11 @@ public class LoanFundsServiceImpl implements LoanFundsService {
                 Double amountLent = lf.getFundAmount();
 
                 mlender.setFundsOnHold(mlender.getFundsOnHold().subtract(BigDecimal.valueOf(amountLent)));
-                userRepository.save(mlender);
+                userService.updateUser(mlender);
 
-                Transaction.TransactionBuilder lTransactionBuilder = Transaction.builder();
-                lTransactionBuilder.transactionType(transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_RELEASE_HOLD));
-                lTransactionBuilder.initiator(mlender);
-                lTransactionBuilder.recipient(borrower);
-                lTransactionBuilder.amount(BigDecimal.valueOf(amountLent));
-                lTransactionBuilder.loan(loan);
-                transactionRepository.save(lTransactionBuilder.build());
+                transactionService.sendMoneyUserToUser(mlender, borrower, BigDecimal.valueOf(amountLent), loan,
+                        transactionTypeRepository.findTransactionTypeByTypeName(Constants.TRANSACTION_RELEASE_HOLD));
+
 
                 Contract.ContractBuilder contractBuilder = Contract.builder();
                 contractBuilder.borrowerSigned(false);
@@ -153,4 +144,18 @@ public class LoanFundsServiceImpl implements LoanFundsService {
 
         return totalFunded.get();
     }
+
+    @Override
+    public List<LoanFunds> getAcceptedRequestsForUser(UserEntity user) {
+        return loanFundsRepository.findByAcceptedAndLender(true, user);
+    }
+
+    @Override
+    public void rejectFundRequest(Long fundLoanId) {
+        LoanFunds loanFunds = loanFundsRepository.findById(fundLoanId).get();
+
+        loanFunds.setRejected(true);
+        loanFundsRepository.save(loanFunds);
+    }
+
 }

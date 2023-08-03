@@ -1,6 +1,8 @@
 package com.example.fairhandborrowing.service.implement;
 
+import com.example.fairhandborrowing.model.Loan;
 import com.example.fairhandborrowing.model.Transaction;
+import com.example.fairhandborrowing.model.TransactionType;
 import com.example.fairhandborrowing.model.UserEntity;
 import com.example.fairhandborrowing.model.constants.Constants;
 import com.example.fairhandborrowing.repository.TransactionRepository;
@@ -68,6 +70,18 @@ public class TransactionServiceImpl implements TransactionService {
 
         return result;
     }
+
+    @Override
+    public void sendMoneyUserToUser(UserEntity initiator, UserEntity recipient, BigDecimal amount, Loan loan, TransactionType transactionType) {
+        Transaction.TransactionBuilder transactionBuilder = Transaction.builder();
+        transactionBuilder.transactionType(transactionType);
+        transactionBuilder.initiator(initiator);
+        transactionBuilder.recipient(recipient);
+        transactionBuilder.amount(amount);
+        transactionBuilder.loan(loan);
+        transactionRepository.save(transactionBuilder.build());
+    }
+
 
 
 }
