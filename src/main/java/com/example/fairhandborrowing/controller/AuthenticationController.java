@@ -1,7 +1,10 @@
 package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.UserRegistrationDto;
+import com.example.fairhandborrowing.model.Loan;
+import com.example.fairhandborrowing.model.UserEntity;
 import com.example.fairhandborrowing.security.SecurityUtil;
+import com.example.fairhandborrowing.service.LoanService;
 import com.example.fairhandborrowing.service.ProfileTypeService;
 import com.example.fairhandborrowing.service.UserService;
 import org.slf4j.Logger;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,17 +42,49 @@ public class AuthenticationController {
     @Autowired
     private ProfileTypeService profileTypeService;
 
-    //todo:edit profile
-    //create the account generation form
+    @Autowired
+    private LoanService loanService;
+
     @GetMapping("/profile")
     public String showProfile(Model model, Principal principal){
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            model.addAttribute("user_obj",userService.findByUserName(username));
-            // good /bad standing
+            UserEntity dto= userService.findByUserName(username);
+
+            double money=0;
+            double monthlyInterest=0;
+            int months=0;
+            int current_date= new Date().getMonth();
+            List<Loan> late_loans=new ArrayList<Loan>();
+            List<Loan> onTime_loans=new ArrayList<Loan>();
+            for(Loan x:  loanService.getAllLoansByUserId(dto.getUserId())){
+                money+=x.getAmountBorrowed();
+                monthlyInterest+=x.getInterestRate()/100/12*x.getAmountBorrowed();
+
+                if (x.getCreatedOn().getMonth()+ x.getMonthsToPay() >12 ){
+                    months= x.getCreatedOn().getMonth()+ x.getMonthsToPay() %12;
+                }
+
+                if(months > current_date){
+                    // late
+                    late_loans.add(x);
+                }else{
+                    onTime_loans.add(x);
+                }
+            }
+            // get list of late loans.
+
+
+            model.addAttribute("user",dto);
+            model.addAttribute("money",money );
+            model.addAttribute("monthlyInterest",monthlyInterest );
+            model.addAttribute("late_loans",late_loans );
+            model.addAttribute("ontime_loans",onTime_loans );
+
+
         }
-        return "Registration/Profile";
+        return "UserPages/ShowUser";
     }
 
     @GetMapping("/profileform")
