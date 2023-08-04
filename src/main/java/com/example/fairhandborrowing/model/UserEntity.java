@@ -44,4 +44,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Loan> loans;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Profile profile;
 }

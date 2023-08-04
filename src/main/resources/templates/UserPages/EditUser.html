@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+  <meta charset="UTF-8">
+  <title>Transactions</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+  <section layout:fragment="body" class="mx-auto my-5" style="width: 80vw; min-height: 70vh">
+
+<div>
+  <h1>So, you want to change?</h1>
+  <h6><i> i'll allow it</i></h6>
+</div>
+
+<!--    profile iamge-->
+<div>
+  <h3>Select a new profile image</h3>
+</div>
+<!--     email     first and last name -->
+
+    <form
+      method="post"
+      th:action="@{/edit}"
+        th:object="${user}">
+    <div class="col-md-4">
+      <label for="floatingInput" class="form-label">Email address</label>
+      <input
+              th:field="*{email}"
+              th:value="${user.getEmail() == null ? '': user.getEmail()}"
+              type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <div th:text="${failed}" class="valid-feedback" ></div>
+
+      <div class="col-md-4">
+        <label for="validationCustom01" class="form-label">First name</label>
+        <input
+                th:field="*{firstName}"
+                th:value="${user.getFirstName() == null ? '': user.getFirstName()}"
+                type="text" class="form-control" id="validationCustom01" placeholder="Mark" required>
+        <div class="valid-feedback"></div>
+      </div>
+
+      <div class="col-md-4">
+        <label  for="validationCustom02" class="form-label">Last name</label>
+        <input
+                th:field="*{lastName}"
+                th:value="${user.getLastName() == null ? '': user.getLastName()}"
+                type="text" class="form-control" id="validationCustom02" placeholder="Otto" required>
+        <div class="valid-feedback"></div>
+      </div>
+
+    </div>
+    <button type="submit">Change me</button>
+
+</form>
+
+  </section>
+</main>
+
+</body>
+</html>

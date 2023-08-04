@@ -75,14 +75,14 @@ public class AuthenticationController {
             }
             // get list of late loans.
 
-
             model.addAttribute("user",dto);
             model.addAttribute("money",money );
             model.addAttribute("monthlyInterest",monthlyInterest );
             model.addAttribute("late_loans",late_loans );
             model.addAttribute("ontime_loans",onTime_loans );
 
-
+//            int[] xx = {1, 3, 4};
+//            model.addAttribute("test",xx );
         }
         return "UserPages/ShowUser";
     }

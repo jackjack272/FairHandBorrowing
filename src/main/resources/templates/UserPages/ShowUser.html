@@ -24,23 +24,55 @@
         <span th:text="${user.firstName}"></span>
       <span th:text="${user.lastName}"></span>
     <br/>
-      <span th:if="${bio == null ? 'bio is empty 1':'my bio is empty'}"></span>
+      <span th:if="${bio == null ? '':bio}"></span>
+        <button>
+            <a th:href="@{/edit}">
+                Edit Profile
+            </a>
+        </button>
     </div>
     </div>
 
         <div>
-            <h2>Loans Currently Outstanding</h2>
-            <table th:each="loan:${ontime_loans}">
-                <tr> </tr>
+            <h2>Loans Currently late</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Amount borrowed</td>
+                        <td>Amount paid back</td>
+                        <td>interest Rate</td>
+                </thead>
+
+                <tr th:each="loan:${ontime_loans}">
+                    <td th:text="${loan.getAmountBorrowed()}"></td>
+                    <td>$0</td>
+                    <td th:text="${loan.getInterestRate()}"></td>
+                </tr>
+
             </table>
         </div>
 
-<!--        <div>-->
-<!--            <h2>Late Loans</h2>-->
-<!--            <table th:each="loan:${late_loans}">-->
-<!--                -->
-<!--            </table>-->
-<!--        </div>-->
+        <div>
+            <h2>Loans Currently outstanding</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>Amount borrowed</td>
+                    <td>Amount paid back</td>
+                    <td>interest Rate</td>
+                    <td>late by</td>
+                </tr>
+                </thead>
+
+                <tr th:each="loan:${late_loans}">
+                    <td th:text="${loan.getAmountBorrowed()}"></td>
+                    <td>$150</td>
+                    <td th:text="${loan.getInterestRate()}"></td>
+                    <td >1</td>
+                </tr>
+
+            </table>
+        </div>
 
   </section>
 </main>
