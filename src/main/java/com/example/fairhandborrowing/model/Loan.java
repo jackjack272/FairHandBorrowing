@@ -59,4 +59,7 @@ public class Loan {
     @OneToMany(mappedBy = "loan", cascade = CascadeType.MERGE)
     private List<Transaction> transactions;
 
+    @OneToMany(mappedBy = "loan")
+    private List<Payment> payments;
+
 }

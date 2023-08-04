@@ -14,6 +14,8 @@ public class LoanFunds {
 
     private Double fundAmount;
 
+    private Double fundOwed;
+
     private boolean accepted;
 
     private boolean rejected;

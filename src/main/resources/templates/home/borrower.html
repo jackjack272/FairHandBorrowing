@@ -29,7 +29,7 @@
               <th scope="col">Term (in Mos)</th>
               <th scope="col">Collateral</th>
               <th scope="col">Funding Status</th>
-              <th scope="col" style="min-width: 200px">Actions</th>
+              <th scope="col" style="min-width: 250px">Actions</th>
           </tr>
           </thead>
           <tbody>
@@ -57,7 +57,7 @@
                         th:action="@{/funds/{userName}/{loanId}/request(loanId=${loan.getId()}, userName=${user.getUserName()})}">
                       <button type="submit" th:class="'btn ' + ${loan.getFundProgress() >= 100 ? 'btn-secondary' : 'btn-success'}"
                               th:disabled="${loan.getFundProgress() >= 100}">
-                          <i class="fa fa-usd"></i>
+                          <i class="fas fa-magnifying-glass-dollar"></i>
                       </button>
                   </form>
 
@@ -80,13 +80,26 @@
                   </button>
 
 <!--                  // sign contract-->
-                  <button th:if="${loan.getLoanStatus().getStatusName()} == 'FULLY_FUNDED'"
+                  <button th:if="${loan.getLoanStatus().getId()  == 2} or
+                                    ${loan.getLoanStatus().getId()  == 3} or
+                                    ${loan.getLoanStatus().getId()  == 4}"
                           type="button"
-                          class="btn btn-primary"
+                          class="btn btn-warning"
                           data-toggle="modal"
                           data-target="#signContractModal" th:attrappend="data-target=${loan.id}">
-                      <i class="fa fa-file-contract"></i>
+                      <i class="fas fa-file-contract"></i>
                   </button>
+
+<!--                  // pay loan-->
+                  <form class="d-inline" role="form" method="get"
+                        th:action="@{/payment/{userName}/{loanId}/schedule(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                      <button th:if="${loan.getLoanStatus().getId()  == 3}"
+                              type="submit"
+                              class="btn btn-success">
+                          <i class="fas fa-usd"></i>
+                      </button>
+                  </form>
+
                   <div th:replace="~{fragments/archive_loan :: modal(loan=${loan}, user=${user})}"></div>
                   <div th:if="${loan.getContract() != null}" th:replace="~{fragments/sign_contract :: modal(loan=${loan}, contract=${loan.getContract()}, user=${user})}"></div>
               </td>

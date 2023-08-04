@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+    <meta charset="UTF-8">
+    <title>Payment Schedule</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <section layout:fragment="body" class="mx-auto my-5" style="width: 70vw; min-height: 70vh">
+        <div class="d-flex justify-content-between flex-row my-2">
+            <h4 class="fw-bolder">Payment Schedule</h4>
+            <h5 th:text="'For Loan ID: ' + ${loan.getId()}"></h5>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" th:style="${'width: ' + paidCount + '%;'}" aria-valuemin="0" aria-valuemax="100"
+                 th:text="${paidCount + '%'}"></div>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">Payment ID</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Amount Due</th>
+                <th scope="col">Interest Due</th>
+                <th scope="col">Total Due</th>
+                <th scope="col">Payment Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="payment : ${payments}">
+                    <td th:text="${payment.getPaymentId()}"></td>
+                    <td th:text="${#dates.format(payment.getDueDate(), 'dd-MM-yyyy')}"></td>
+                    <td th:text="${#numbers.formatCurrency(payment.getAmountDue())}"></td>
+                    <td th:text="${#numbers.formatCurrency(payment.getInterestDue())}"></td>
+                    <td th:text="${#numbers.formatCurrency(payment.getTotalDue())}"></td>
+                    <td th:if="${payment.getPaymentDate() != null}" th:text="${#dates.format(payment.getPaymentDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:if="${payment.getPaymentDate() == null}" th:text="'N/A'"></td>
+                    <td th:if="${payment.isPaid()}">
+                        <span class="badge rounded-pill text-bg-success">Paid</span>
+                    </td>
+                    <td th:if="${!payment.isPaid()}">
+                        <span class="badge rounded-pill text-bg-warning">Unpaid</span>
+                    </td>
+                    <td>
+                        <button th:disabled="${payment.isPaid()}"
+                                type="button"
+                                th:class="'btn ' + ${payment.isPaid() ? 'btn-secondary' : 'btn-success'}"
+                                data-toggle="modal"
+                                data-target="#payLoanModal" th:attrappend="data-target=${payment.getPaymentId()}">
+                            PAY
+                        </button>
+                        <div th:replace="~{fragments/pay_loan :: modal(loan=${loan}, user=${user}, payment=${payment})}"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

@@ -45,6 +45,7 @@ public class LoanFundsServiceImpl implements LoanFundsService {
         fund.setAccepted(false);
         fund.setRejected(false);
         fund.setFundAmount(0.0);
+        fund.setFundOwed(0.0);
 
         loanFundsRepository.save(fund);
     }
@@ -62,6 +63,7 @@ public class LoanFundsServiceImpl implements LoanFundsService {
         loanFunds.setFundAmount(fundAmount);
 
         Loan loan = loanFunds.getLoan();
+        loanFunds.setFundOwed((fundAmount * loan.getInterestRate() / 100) + fundAmount);
 
         UserEntity lender = loanFunds.getLender();
         lender.setAvailableFunds(lender.getAvailableFunds().subtract(BigDecimal.valueOf(fundAmount)));

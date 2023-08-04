@@ -29,6 +29,8 @@ public class ContractServiceImpl implements ContractService {
 
     @Autowired
     private LoanStatusRepository loanStatusRepository;
+    @Autowired
+    private PaymentServiceImpl paymentService;
 
 
     @Override
@@ -58,6 +60,7 @@ public class ContractServiceImpl implements ContractService {
             Optional<Loan> loan = loanRepository.findById(loanId);
             loan.get().setLoanStatus(loanStatusRepository.findLoanStatusByStatusName(Constants.ACTIVE));
             loanRepository.save(loan.get());
+            paymentService.generatePaymentSchedule(loan.get());
         }
     }
 }

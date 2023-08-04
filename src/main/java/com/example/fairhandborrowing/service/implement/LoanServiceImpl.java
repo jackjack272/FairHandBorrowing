@@ -173,7 +173,9 @@ public class LoanServiceImpl implements LoanService {
             loanDto.setFundProgress((int) Math.round(fundProgress * 100));
 
             // prepare contract info
-            if(loanDto.getLoanStatus().getStatusName().equals(Constants.FULLY_FUNDED)) {
+            if(loanDto.getLoanStatus().getStatusName().equals(Constants.FULLY_FUNDED) ||
+                    loanDto.getLoanStatus().getStatusName().equals(Constants.ACTIVE) ||
+                    loanDto.getLoanStatus().getStatusName().equals(Constants.COMPLETED)) {
                 loanDto.setContract(prepareContractDto(loanDto, user));
             }
         });
