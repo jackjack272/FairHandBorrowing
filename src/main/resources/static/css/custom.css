@@ -13,16 +13,25 @@ body{
 .glass-card {
     width: 100%;
     max-width: 600px;
-    padding: 3rem 2.5rem;
+    padding: 2rem 2.5rem;
 
     border-radius: 1rem;
     border: 1px solid transparent;
 
     backdrop-filter: blur(1rem);
     box-shadow: 1.3rem 1.3rem 1.3rem rgba(0,0,0,0.5);
-    background-color: rgba(255,255,255, 0.1);
+    background-color: rgba(100,100,100, 0.4);
     border-bottom-color: rgba(255,255,255,0.1);
     border-top-color: rgba(255,255,255,0.5);
     border-left-color: rgba(255,255,255,0.5);
     border-right-color: rgba(255,255,255,0.1);
+
+}
+
+.glass-card > form > .container > * {
+    color: rgba(255,255,255,1);
+}
+
+td {
+    vertical-align: middle;
 }

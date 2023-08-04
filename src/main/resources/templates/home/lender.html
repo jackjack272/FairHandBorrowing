@@ -162,9 +162,10 @@
             <tr th:each="loan : ${loans}">
                 <td th:text="${loan.getId()}"></td>
                 <td>
-                    <span class="badge rounded-pill text-bg-secondary" th:text="${loan.getLoanStatus().getStatusName()}" />
+                    <span class="badge rounded-pill text-bg-secondary"
+                          th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
                 </td>
-                <td th:text="${loan.getCreatedOn()}"></td>
+                <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
                 <td th:text="${loan.getAmountBorrowed()}"></td>
                 <td th:text="${loan.getInterestRate()}"></td>
                 <td th:text="${loan.getDescription()}"></td>
@@ -183,7 +184,7 @@
                             th:class="'btn btn-primary'"
                             data-toggle="modal"
                             data-target="#signContractModal" th:attrappend="data-target=${loan.id}">
-                        <i class="fa fa-times"></i>
+                        <i class="fa fa-file-contract"></i>
                     </button>
 
 

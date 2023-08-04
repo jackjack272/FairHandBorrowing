@@ -10,7 +10,7 @@
 <body class="d-flex flex-column h-100">
 <main class="flex-shrink-0">
 
-  <section layout:fragment="body" class="mx-auto my-5" style="width: 80vw; min-height: 70vh">
+  <section layout:fragment="body" class="mx-auto my-5" style="width: 70vw; min-height: 70vh">
       <div class="d-flex justify-content-between flex-row my-2">
           <h4 class="fw-bolder">Loans</h4>
           <a class="btn btn-primary" th:href="@{/loan/{userName}/new(userName=${user.getUserName()})}"><i class="fa fa-plus" aria-hidden="true"></i> | Create Loan</a>
@@ -21,6 +21,7 @@
           <thead class="table-dark">
           <tr>
               <th scope="col">Loan ID</th>
+              <th scope="col">Loan Status</th>
               <th scope="col">Created On</th>
               <th scope="col">Total Amount</th>
               <th scope="col">Interest Rate</th>
@@ -28,13 +29,17 @@
               <th scope="col">Term (in Mos)</th>
               <th scope="col">Collateral</th>
               <th scope="col">Funding Status</th>
-              <th scope="col" class="w-25">Actions</th>
+              <th scope="col" style="min-width: 200px">Actions</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="loan : ${loans}">
               <td th:text="${loan.getId()}"></td>
-              <td th:text="${loan.getCreatedOn()}"></td>
+              <td>
+                  <span class="badge rounded-pill text-bg-secondary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+              </td>
+              <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
               <td th:text="${loan.getAmountBorrowed()}"></td>
               <td th:text="${loan.getInterestRate()}"></td>
               <td th:text="${loan.getDescription()}"></td>
@@ -148,9 +153,10 @@
           <tr th:each="loan : ${loans_history}">
               <td th:text="${loan.getId()}"></td>
               <td>
-                  <span class="badge rounded-pill text-bg-secondary" th:text="${loan.getLoanStatus().getStatusName()}" />
+                  <span class="badge rounded-pill text-bg-secondary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
               </td>
-              <td th:text="${loan.getCreatedOn()}"></td>
+              <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
               <td th:text="${loan.getAmountBorrowed()}"></td>
               <td th:text="${loan.getInterestRate()}"></td>
               <td th:text="${loan.getDescription()}"></td>

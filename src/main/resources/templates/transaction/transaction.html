@@ -9,18 +9,24 @@
 </head>
 <body class="d-flex flex-column h-100">
 <main class="flex-shrink-0">
-    <section layout:fragment="body" class="mx-auto my-5" style="width: 80vw; min-height: 70vh">
-        <h3>
-            <small class="text-body-secondary">Available Funds</small>
-        </h3>
-        <p th:text="${available_funds}"></p>
-        <h3>
-            <small class="text-body-secondary">On Hold Funds</small>
-        </h3>
-        <p th:text="${on_hold_funds}"></p>
-        <button type="button" class="btn btn-primary d-inline" th:disabled="${available_funds == 0}" data-toggle="modal" data-target="#withdrawModal">
-            Withdraw Funds
-        </button>
+    <section layout:fragment="body" class="mx-auto my-5" style="width: 70vw; min-height: 70vh">
+        <h4 class="fw-bolder my-2">Account Details</h4>
+        <div>
+            <div class="input-group">
+                <div class="input-group-prepend w-25">
+                    <div class="input-group-text text-bg-dark">Available Funds</div>
+                </div>
+                <input type="text" readonly class="form-control" th:placeholder="${available_funds}">
+            </div>
+        </div>
+        <div>
+            <div class="input-group">
+                <div class="input-group-prepend w-25">
+                    <div class="input-group-text text-bg-dark">On Hold Funds</div>
+                </div>
+                <input type="text" readonly class="form-control" th:placeholder="${on_hold_funds}">
+            </div>
+        </div>
 
         <!-- Withdraw Funds Modal -->
         <div class="modal fade" id="withdrawModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -58,9 +64,7 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#depositModal">
-            Deposit Funds
-        </button>
+
 
 
 
@@ -101,7 +105,17 @@
 
 
 
-        <h3>Transaction History</h3>
+        <div class="d-flex justify-content-between flex-row my-2 my-4">
+            <h4 class="fw-bolder">Transaction History</h4>
+            <div>
+                <button type="button" class="btn btn-primary d-inline" th:disabled="${available_funds == 0}" data-toggle="modal" data-target="#withdrawModal">
+                    Withdraw Funds
+                </button>
+                <button type="button" class="btn btn-primary d-inline" data-toggle="modal" data-target="#depositModal">
+                    Deposit Funds
+                </button>
+            </div>
+        </div>
         <div th:if="${transactions.isEmpty()}" class="mx-auto w-75 my-5">
             <h4>There are no Transactions to show</h4>
         </div>
@@ -120,8 +134,8 @@
             <tbody>
             <tr th:each="tx : ${transactions}">
                 <td th:text="${tx.getId()}"></td>
-                <td th:text="${tx.getCreationTimestamp}"></td>
-                <td th:text="${tx.getTransactionType().getTypeName()}"></td>
+                <td th:text="${#dates.format(tx.getCreationTimestamp(), 'dd-MM-yyyy HH:mm')}"></td>
+                <td th:text="${#strings.replace(tx.getTransactionType().getTypeName(),'_',' ')}"></td>
                 <td th:text="${tx.getInitiator() != null ? tx.getInitiator().getUsername() : 'N/A'}"></td>
                 <td th:text="${tx.getRecipient() != null ? tx.getRecipient().getUsername() : 'N/A'}"></td>
                 <td th:text="${tx.getLoan() != null ? tx.getLoan().getId() : 'N/A'}"></td>
