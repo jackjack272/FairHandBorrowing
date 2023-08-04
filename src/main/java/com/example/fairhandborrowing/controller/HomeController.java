@@ -69,7 +69,7 @@ public class HomeController {
       model.addAttribute("user", user);
       if (user.getProfileType().equalsIgnoreCase("BORROWER")) {
         model.addAttribute("userType", "borrower");
-        List<Collateral> collaterals = collateralService.findAllCollaterals();
+        List<Collateral> collaterals = collateralService.findAllCollateralsByUsername(username);
         List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
         List<LoanDto> loanDtos = new ArrayList<>();
         loanService.prepareDtos(loanDtos, loans, userEntity);
