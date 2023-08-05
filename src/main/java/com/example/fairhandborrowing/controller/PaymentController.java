@@ -45,7 +45,7 @@ public class PaymentController {
         List<Payment> payments = paymentRepository.findPaymentsByLoanId(loanId);
         model.addAttribute("loan", loan);
         model.addAttribute("payments", payments);
-        model.addAttribute("paidCount", paymentService.getPaidCountStr());;
+        model.addAttribute("paidCount", paymentService.getPaidCountStr(payments));;
 
         UserEntity user = userRepository.findFirstByUsername(userName);
         model.addAttribute("user", user);
