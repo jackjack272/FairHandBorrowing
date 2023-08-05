@@ -1,6 +1,7 @@
 package com.example.fairhandborrowing.controller;
 
 import com.example.fairhandborrowing.dto.CollateralDto;
+import com.example.fairhandborrowing.model.Collateral;
 import com.example.fairhandborrowing.service.CollateralService;
 import com.example.fairhandborrowing.security.SecurityUtil;
 import org.slf4j.Logger;
@@ -44,10 +45,9 @@ public class CollateralController {
 
         String erro=validateInputs(collateralDto);
         if(!erro.equals("")){
-            model.addAttribute("fail",erro);
+            model.addAttribute("fail",erro);// i realise this wont be able to send the message
             return "collateral/collateral-create";
         }
-
 
         collateralService.createCollateral(userName, collateralDto);
         return "redirect:/home";
@@ -67,22 +67,22 @@ public class CollateralController {
 
     private String validateInputs(CollateralDto collateralDto){
         if (collateralDto.getBrand()==null){
-            //return "brand name cant be null"
+            return "brand name cant be null";
         }
         if(ensureNoSpecialChars(collateralDto.getBrand())){
-            //return "brand cant have those special characters"
+            return "brand cant have those special characters";
         }
-        if (collateralDto.getItemName()==null){}
-        if (collateralDto.getDescription()==null){}
-        if (collateralDto.getMarketValue()==null){}
-
+        if (collateralDto.getItemName()==null){
+            return "enter the item name ";
+        }
+        if (collateralDto.getDescription()==null){
+            return "enter the description";
+        }
+        if (collateralDto.getMarketValue()==null){
+            return "enter the market value";
+        }
         return "";
     }
-
-
-
-
-
 
 
     @PostMapping("/collateral/{userName}/{collateralId}/delete")
