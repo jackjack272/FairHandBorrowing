@@ -22,7 +22,7 @@ public class LoanDto {
 
     private Double interestRate;
 
-    private int monthsToPay;
+    private Integer monthsToPay;
 
     private String description;
 

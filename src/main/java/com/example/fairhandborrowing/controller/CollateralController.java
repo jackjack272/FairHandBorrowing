@@ -42,9 +42,48 @@ public class CollateralController {
             return "collateral/collateral-create";
         }
 
+        String erro=validateInputs(collateralDto);
+        if(!erro.equals("")){
+            model.addAttribute("fail",erro);
+            return "collateral/collateral-create";
+        }
+
+
         collateralService.createCollateral(userName, collateralDto);
         return "redirect:/home";
     }
+
+    private Boolean ensureNoSpecialChars(String theDescription){
+        for(char x:theDescription.toCharArray()){
+            if ( (int) x == 32) {
+                continue;
+            }
+            if(! String.valueOf(x).matches( "[A-Za-z0-9,.?!';-]") ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String validateInputs(CollateralDto collateralDto){
+        if (collateralDto.getBrand()==null){
+            //return "brand name cant be null"
+        }
+        if(ensureNoSpecialChars(collateralDto.getBrand())){
+            //return "brand cant have those special characters"
+        }
+        if (collateralDto.getItemName()==null){}
+        if (collateralDto.getDescription()==null){}
+        if (collateralDto.getMarketValue()==null){}
+
+        return "";
+    }
+
+
+
+
+
+
 
     @PostMapping("/collateral/{userName}/{collateralId}/delete")
     public String deleteCollateral(@PathVariable("userName") String userName,

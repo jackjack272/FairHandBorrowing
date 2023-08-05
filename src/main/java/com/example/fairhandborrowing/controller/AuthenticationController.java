@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 @RequestMapping
@@ -99,7 +100,8 @@ public class AuthenticationController {
     //todo:registration
     @GetMapping("/register")
     public String getRegistrationPage(Model model){
-        model.addAttribute("user",new UserRegistrationDto());
+//        model.addAttribute("user",new UserRegistrationDto((long)1,"james","12","12","adad@gmail.com","123",new Date(),"borrower"));
+        model.addAttribute("user",new UserRegistrationDto( ));
         return "Registration/Register";
     }
 
@@ -113,9 +115,30 @@ public class AuthenticationController {
                            @ModelAttribute("UserRegistrationDto")UserRegistrationDto dto,
                            BindingResult result) {
 
-            LOGGER.info("Registration DTO: " + dto);
+        LOGGER.info("Registration DTO: " + dto);
 
-            if (userService.findByUserName(dto.getUserName()) != null) {
+
+
+        if(numInString(dto.getFirstName())){
+            model.addAttribute("failed","first name cant have numbers in it.");
+            return "redirect:/register?fail";
+        }
+        if(numInString(dto.getLastName())){
+            model.addAttribute("failed","last name cant have numbers in it.");
+            return "redirect:/register?fail";
+        }
+        if(overEighteen(dto.getDob())){
+            model.addAttribute("failed","you need to be older then 18 to sighn up");
+            return "redirect:/register?fail";
+        }
+
+
+
+
+
+
+
+        if (userService.findByUserName(dto.getUserName()) != null) {
                 model.addAttribute("failed","username already taken.");
                 return "redirect:/register?fail";
             } else if (userService.findByEmail(dto.getUserName()) != null) {
@@ -149,4 +172,33 @@ public class AuthenticationController {
         return "redirect:/home";
     }
 
+
+    private Boolean overEighteen(Date user_dob){
+        String[] date_components= String.valueOf(new Date()).split(" ");
+        String[] user_date_components= String.valueOf(user_dob).split(" ");
+        try{
+            int year_18=Integer.parseInt(date_components[5]) -18;
+            int user_year_18=Integer.parseInt(user_date_components[5]);
+
+            if(user_year_18> year_18){
+                return true;
+                // i know im not considering months but have things to get done!
+            }
+
+        }catch (Exception e){
+
+        }
+        return false;
+    }
+
+    private Boolean numInString(String value){
+        // value.matches("[0-9]+) wasent working
+        for(char x: value.toCharArray()){
+            if( !String.valueOf(x).matches("[A-Za-z]+")){
+                // its not a letter
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -32,6 +32,7 @@ public class EditUserController {
         UserRegistrationDto dto= UserMapper.mapToDto(userService.findByUserName(username));
         model.addAttribute("user" ,dto);
 
+//        model.addAttribute("profile",dto.)
         return "UserPages/EditUser";
     }
 
