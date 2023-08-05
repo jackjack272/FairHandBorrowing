@@ -14,8 +14,8 @@
             <h4 class="fw-bolder">Payment Schedule</h4>
             <h5 th:text="'For Loan ID: ' + ${loan.getId()}"></h5>
         </div>
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" th:style="${'width: ' + paidCount + '%;'}" aria-valuemin="0" aria-valuemax="100"
+        <div class="progress mb-4">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" th:style="${'width: ' + paidCount + '%;'}" aria-valuemin="0" aria-valuemax="100"
                  th:text="${paidCount + '%'}"></div>
         </div>
 

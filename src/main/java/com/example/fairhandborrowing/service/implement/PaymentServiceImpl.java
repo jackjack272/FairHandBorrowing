@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -104,7 +105,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public String getPaidCountStr() {
-        return "50";
+    public String getPaidCountStr(List<Payment> payments) {
+        AtomicReference<Double> totalPaid = new AtomicReference<>(0.0);
+        payments.stream().forEach(p -> {
+            if(p.isPaid()) totalPaid.updateAndGet(v -> v + 1);
+        });
+        return String.valueOf(totalPaid.get()/(double)payments.size() * 100);
     }
 }
