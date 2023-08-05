@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findFirstByUsername(String userName);
 
     List<UserEntity> findAllByProfileType(ProfileType profileType);
+
+
+
 }

@@ -74,6 +74,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserEntity userEntity) {
+
+        UserEntity usr= userRepository.findByUsername(userEntity.getUsername()).get();
+        usr.setFirstName(userEntity.getFirstName());
+        usr.setLastName(userEntity.getLastName());
+        usr.setEmail(userEntity.getEmail());
+            // incase this dosent work with fresh db just comment out the above.
         userRepository.save(userEntity);
     }
 }

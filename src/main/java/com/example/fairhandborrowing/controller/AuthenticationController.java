@@ -101,7 +101,7 @@ public class AuthenticationController {
     @GetMapping("/register")
     public String getRegistrationPage(Model model){
 //        model.addAttribute("user",new UserRegistrationDto((long)1,"james","12","12","adad@gmail.com","123",new Date(),"borrower"));
-        model.addAttribute("user",new UserRegistrationDto( ));
+        model.addAttribute("user",new UserRegistrationDto() );
         return "Registration/Register";
     }
 
@@ -119,22 +119,18 @@ public class AuthenticationController {
 
 
 
-        if(numInString(dto.getFirstName())){
-            model.addAttribute("failed","first name cant have numbers in it.");
-            return "redirect:/register?fail";
-        }
-        if(numInString(dto.getLastName())){
-            model.addAttribute("failed","last name cant have numbers in it.");
-            return "redirect:/register?fail";
-        }
-        if(overEighteen(dto.getDob())){
-            model.addAttribute("failed","you need to be older then 18 to sighn up");
-            return "redirect:/register?fail";
-        }
-
-
-
-
+//        if(numInString(dto.getFirstName())){
+//            model.addAttribute("failed","first name cant have numbers in it.");
+//            return "redirect:/register?fail";
+//        }
+//        if(numInString(dto.getLastName())){
+//            model.addAttribute("failed","last name cant have numbers in it.");
+//            return "redirect:/register?fail";
+//        }
+//        if(overEighteen(dto.getDob())){
+//            model.addAttribute("failed","you need to be older then 18 to sighn up");
+//            return "redirect:/register?fail";
+//        }
 
 
 
