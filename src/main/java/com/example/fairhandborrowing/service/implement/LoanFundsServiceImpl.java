@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanFundsServiceImpl implements LoanFundsService {
@@ -52,7 +53,9 @@ public class LoanFundsServiceImpl implements LoanFundsService {
 
     @Override
     public List<LoanFunds> getPendingRequestsForUser(UserEntity user) {
-        return loanFundsRepository.findByAcceptedAndLenderAndRejected(false, user, false);
+        List<LoanFunds> lfs = loanFundsRepository.findByAcceptedAndLenderAndRejected(false, user, false);
+        return lfs.stream().filter(lf -> !lf.getLoan().getLoanStatus().getStatusName().equals(Constants.CANCELLED) &&
+                !lf.getLoan().getLoanStatus().getStatusName().equals(Constants.FULLY_FUNDED)).collect(Collectors.toList());
     }
 
     @Override

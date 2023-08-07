@@ -36,7 +36,17 @@
           <tr th:each="loan : ${loans}">
               <td th:text="${loan.getId()}"></td>
               <td>
-                  <span class="badge rounded-pill text-bg-secondary"
+<!--                  <span class="badge rounded-pill text-bg-secondary"-->
+<!--                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />-->
+                  <span th:if="${loan.getLoanStatus().getId() == 1}" class="badge rounded-pill text-bg-secondary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 2}" class="badge rounded-pill text-bg-warning"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 3}" class="badge rounded-pill text-bg-primary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 4}" class="badge rounded-pill text-bg-success"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 5}" class="badge rounded-pill text-bg-danger"
                         th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
               </td>
               <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
@@ -166,7 +176,15 @@
           <tr th:each="loan : ${loans_history}">
               <td th:text="${loan.getId()}"></td>
               <td>
-                  <span class="badge rounded-pill text-bg-secondary"
+                  <span th:if="${loan.getLoanStatus().getId() == 1}" class="badge rounded-pill text-bg-secondary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 2}" class="badge rounded-pill text-bg-warning"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 3}" class="badge rounded-pill text-bg-primary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 4}" class="badge rounded-pill text-bg-success"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 5}" class="badge rounded-pill text-bg-danger"
                         th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
               </td>
               <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
