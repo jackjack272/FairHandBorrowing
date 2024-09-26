@@ -1,0 +1,308 @@
+diff --git a/src/main/java/com/example/fairhandborrowing/controller/HomeController.java b/src/main/java/com/example/fairhandborrowing/controller/HomeController.java
+index aa73f9d..31895d7 100644
+--- a/src/main/java/com/example/fairhandborrowing/controller/HomeController.java
++++ b/src/main/java/com/example/fairhandborrowing/controller/HomeController.java
+@@ -51,7 +51,7 @@ public class HomeController {
+             //TODO fetch collateral of borrower
+             //TODO fetch loans of borrower
+             List<Collateral> collaterals = collateralService.findAllCollaterals();
+-            List<Loan> loans = loanService.getAllLoansByUserId(user.getId());
++            List<Loan> loans = loanService.getAllNonArchivedLoansByUserId(user.getId());
+             model.addAttribute("collaterals", collaterals);
+             model.addAttribute("loans", loans);
+             return "home/borrower";
+diff --git a/src/main/java/com/example/fairhandborrowing/controller/LoanController.java b/src/main/java/com/example/fairhandborrowing/controller/LoanController.java
+index 857992c..d11ab72 100644
+--- a/src/main/java/com/example/fairhandborrowing/controller/LoanController.java
++++ b/src/main/java/com/example/fairhandborrowing/controller/LoanController.java
+@@ -5,6 +5,7 @@ import com.example.fairhandborrowing.dto.LoanDto;
+ import com.example.fairhandborrowing.mapper.LoanMapper;
+ import com.example.fairhandborrowing.model.Collateral;
+ import com.example.fairhandborrowing.model.Loan;
++import com.example.fairhandborrowing.repository.LoanRepository;
+ import com.example.fairhandborrowing.service.CollateralService;
+ import com.example.fairhandborrowing.service.LoanService;
+ import org.slf4j.Logger;
+@@ -62,9 +63,27 @@ public class LoanController {
+         Loan loan = loanService.getLoanById(loanId);
+         LoanDto loanDto = LoanMapper.mapToDto(loan);
+         List<Collateral> collaterals = collateralService.findAllCollateralsByUsername(userName);
++        model.addAttribute("userName", userName);
+         model.addAttribute("allcollaterals", collaterals);
+         model.addAttribute("loan", loanDto);
+         return "loan/loan-edit";
+     }
+ 
++    @PostMapping("/loan/{userName}/edit")
++    public String editLoan(@PathVariable("userName") String userName,
++                           @RequestParam("loanId") Long loanId,
++                           @ModelAttribute("loan") LoanDto loanDto,
++                           @RequestParam(value = "collaterals", required = false) String[] collaterals,
++                           Model model) {
++        loanService.editLoan(loanId, loanDto, collaterals);
++        return "redirect:/home";
++    }
++
++    @PostMapping("/loan/{userName}/archive")
++    public String archiveLoan(@PathVariable("userName") String userName,
++                              @RequestParam("loanId") Long loanId) {
++
++        loanService.archiveLoan(loanId);
++        return "redirect:/home";
++    }
+ }
+diff --git a/src/main/java/com/example/fairhandborrowing/dto/LoanDto.java b/src/main/java/com/example/fairhandborrowing/dto/LoanDto.java
+index c49001e..95283dd 100644
+--- a/src/main/java/com/example/fairhandborrowing/dto/LoanDto.java
++++ b/src/main/java/com/example/fairhandborrowing/dto/LoanDto.java
+@@ -23,6 +23,12 @@ public class LoanDto {
+ 
+     private int monthsToPay;
+ 
++    private String description;
++
++    private boolean isArchived;
++
++    private boolean isActive;
++
+     private Date createdOn;
+ 
+     private UserEntity user;
+diff --git a/src/main/java/com/example/fairhandborrowing/mapper/LoanMapper.java b/src/main/java/com/example/fairhandborrowing/mapper/LoanMapper.java
+index 9e75243..5d2961f 100644
+--- a/src/main/java/com/example/fairhandborrowing/mapper/LoanMapper.java
++++ b/src/main/java/com/example/fairhandborrowing/mapper/LoanMapper.java
+@@ -9,6 +9,9 @@ public class LoanMapper {
+ 
+     public static Loan mapToModel(LoanDto loanDto) {
+         Loan loan = Loan.builder()
++                .description(loanDto.getDescription())
++                .isArchived(loanDto.isArchived())
++                .isActive(loanDto.isActive())
+                 .amountBorrowed(loanDto.getAmountBorrowed())
+                 .interestRate(loanDto.getInterestRate())
+                 .monthsToPay(loanDto.getMonthsToPay())
+@@ -21,14 +24,17 @@ public class LoanMapper {
+     public static LoanDto mapToDto(Loan loan) {
+     LoanDto loanDto =
+         LoanDto.builder()
+-            .id(loan.getId())
+-            .amountBorrowed(loan.getAmountBorrowed())
+-            .interestRate(loan.getInterestRate())
+-            .monthsToPay(loan.getMonthsToPay())
+-            .createdOn(loan.getCreatedOn())
+-            .collaterals(loan.getCollaterals())
+-            .user(loan.getUser())
+-            .build();
++                .id(loan.getId())
++                .description(loan.getDescription())
++                .isArchived(loan.isArchived())
++                .isActive(loan.isActive())
++                .amountBorrowed(loan.getAmountBorrowed())
++                .interestRate(loan.getInterestRate())
++                .monthsToPay(loan.getMonthsToPay())
++                .createdOn(loan.getCreatedOn())
++                .collaterals(loan.getCollaterals())
++                .user(loan.getUser())
++                .build();
+ 
+     return loanDto;
+     }
+diff --git a/src/main/java/com/example/fairhandborrowing/model/Loan.java b/src/main/java/com/example/fairhandborrowing/model/Loan.java
+index 3abf9d0..f7e0267 100644
+--- a/src/main/java/com/example/fairhandborrowing/model/Loan.java
++++ b/src/main/java/com/example/fairhandborrowing/model/Loan.java
+@@ -30,6 +30,12 @@ public class Loan {
+ 
+     private int monthsToPay;
+ 
++    private String description;
++
++    private boolean isArchived;
++
++    private boolean isActive;
++
+     @CreationTimestamp(source = SourceType.DB)
+     private Date createdOn;
+ 
+diff --git a/src/main/java/com/example/fairhandborrowing/service/LoanService.java b/src/main/java/com/example/fairhandborrowing/service/LoanService.java
+index a18a3c6..6ffcebb 100644
+--- a/src/main/java/com/example/fairhandborrowing/service/LoanService.java
++++ b/src/main/java/com/example/fairhandborrowing/service/LoanService.java
+@@ -8,7 +8,13 @@ import java.util.List;
+ public interface LoanService {
+     List<Loan> getAllLoansByUserId(Long userId);
+ 
++    List<Loan> getAllNonArchivedLoansByUserId(Long userId);
++
+     Loan getLoanById(Long loanId);
+ 
+     void createLoan(String userName, LoanDto loanDto);
++
++    void editLoan(Long loanId, LoanDto loanDto, String[] collaterals);
++
++    void archiveLoan(Long loanId);
+ }
+diff --git a/src/main/java/com/example/fairhandborrowing/service/implement/LoanServiceImpl.java b/src/main/java/com/example/fairhandborrowing/service/implement/LoanServiceImpl.java
+index 8c87199..a68ceee 100644
+--- a/src/main/java/com/example/fairhandborrowing/service/implement/LoanServiceImpl.java
++++ b/src/main/java/com/example/fairhandborrowing/service/implement/LoanServiceImpl.java
+@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.ListIterator;
+ import java.util.stream.Collectors;
+@@ -38,6 +39,14 @@ public class LoanServiceImpl implements LoanService {
+         return loans;
+     }
+ 
++    @Override
++    public List<Loan> getAllNonArchivedLoansByUserId(Long userId) {
++        List<Loan> loans = getAllLoansByUserId(userId);
++
++        List<Loan> filteredLoans = loans.stream().filter(loan -> !loan.isArchived()).collect(Collectors.toList());
++        return filteredLoans;
++    }
++
+     @Override
+     public Loan getLoanById(Long loanId) {
+         return loanRepository.findById(loanId).get();
+@@ -57,32 +66,34 @@ public class LoanServiceImpl implements LoanService {
+             c.setLoan(loan);
+             collateralRepository.saveAndFlush(c);
+         }
++    }
++
++    @Override
++    public void editLoan(Long loanId, LoanDto loanDto, String[] collaterals) {
++        Loan loan = getLoanById(loanId);
++        loan.setDescription(loanDto.getDescription());
++        loan.setAmountBorrowed(loanDto.getAmountBorrowed());
++        loan.setInterestRate(loanDto.getInterestRate());
++        loan.setMonthsToPay(loanDto.getMonthsToPay());
++        List<Collateral> collateralAccumulator = new ArrayList<>();
++
++        if(collaterals != null) {
++            for(String col : collaterals) {
++                Collateral collateral = collateralRepository.findById(Long.valueOf(col)).get();
++                collateral.setLoan(loan);
++                collateralAccumulator.add(collateral);
++            }
++            loan.setCollaterals(collateralAccumulator);
++        }
++
++        loanRepository.save(loan);
++    }
+ 
+-//        ListIterator itr = collaterals.listIterator();
+-//        while (itr.hasNext()) {
+-//            Collateral c = (Collateral) itr.next();
+-//            c.setLoan(loan);
+-//            collateralRepository.saveAndFlush(c);
+-//        }
+-
+-//        collaterals.map(collateral -> {
+-////            collateral.setInUse(true);
+-//            collateral.setLoan(loan);
+-//            collateralRepository.save(collateral);
+-//        });
+-////
+-//        collaterals.forEach(collateral -> {
+-//            collateral.setLoan(loan);
+-//            collateralRepository.saveAndFlush(collateral);
+-//        });
+-
+-//        List<Collateral> collaterals = loan.getCollaterals();
+-//        collaterals.stream().forEach(collateral -> {
+-//            collateral.setInUse(true);
+-//            collateral.setLoan(loan);
+-//            collateralRepository.save(collateral);
+-//        });
+-
+-//        return loanResult;
++    @Override
++    public void archiveLoan(Long loanId) {
++        Loan loan = loanRepository.findById(loanId).get();
++        loan.setArchived(true);
++
++        loanRepository.save(loan);
+     }
+ }
+diff --git a/src/main/resources/templates/home/borrower.html b/src/main/resources/templates/home/borrower.html
+index 08c9533..6221985 100644
+--- a/src/main/resources/templates/home/borrower.html
++++ b/src/main/resources/templates/home/borrower.html
+@@ -45,8 +45,8 @@
+               <td th:text="${loan.getUser().getUsername()}"></td>
+               <td th:text="${loan.getAmountBorrowed()}"></td>
+               <td th:text="${loan.getInterestRate()}"></td>
+-              <td>ToDo Description of Loan</td>
+-              <td>Months To Pay</td>
++              <td th:text="${loan.getDescription()}">ToDo Description of Loan</td>
++              <td th:text="${loan.getMonthsToPay()}">Months To Pay</td>
+               <td>
+ <!--                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">-->
+ <!--                      Launch demo modal-->
+@@ -72,13 +72,17 @@
+ <!--                          </div>-->
+ <!--                      </div>-->
+ <!--                  </div>-->
+-                  <a class="btn btn-warning" th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
++                  <a class="btn btn-warning"
++                     th:href="@{/loan/{userName}/edit(loan_id=${loan.getId()}, userName=${user.getUserName()})}">
+                       <i class="fa fa-pencil"></i>
+                   </a>
+-                  <a type="button" class="btn btn-danger" th:href="@{/loan/{userName}/cancel(id=${loan.getId()}, userName=${user.getUserName()})}">
+-                      <i class="fa fa-times"></i>
+-                  </a>
+-                  <a type="button" class="btn btn-success" th:href="@{/loan/{userName}/request(id=${loan.getId()}, userName=${user.getUserName()})}">
++                  <form role="form" method="post"
++                        style="display: inline"
++                        th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
++                      <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i></button>
++                  </form>
++                  <a type="button" class="btn btn-success"
++                     th:href="@{/loan/{userName}/request(id=${loan.getId()}, userName=${user.getUserName()})}">
+                       <i class="fa fa-usd"></i>
+                   </a>
+               </td>
+diff --git a/src/main/resources/templates/loan/loan-create.html b/src/main/resources/templates/loan/loan-create.html
+index 94f814c..a90e447 100644
+--- a/src/main/resources/templates/loan/loan-create.html
++++ b/src/main/resources/templates/loan/loan-create.html
+@@ -13,6 +13,12 @@
+         <div class="container">
+             <form role="form" method="post" th:action="@{/loan/{userName}/new(userName=${userName})}" th:object="${loan}">
+                 <div class="form-row">
++                    <div class="form-group input-group">
++                        <div class="input-group-prepend">
++                            <span class="input-group-text">Description</span>
++                        </div>
++                        <textarea th:field="*{description}" class="form-control" aria-label="With textarea"></textarea>
++                    </div>
+                     <div class="form-group col-md-6">
+                         <label for="amount">Amount</label>
+                         <input
+diff --git a/src/main/resources/templates/loan/loan-edit.html b/src/main/resources/templates/loan/loan-edit.html
+index d10038d..763a8c4 100644
+--- a/src/main/resources/templates/loan/loan-edit.html
++++ b/src/main/resources/templates/loan/loan-edit.html
+@@ -11,8 +11,14 @@
+ <main class="flex-shrink-0">
+     <section layout:fragment="body" class="py-5">
+         <div class="container">
+-            <form role="form" method="post" th:action="@{/loan/{userName}/edit(userName=${userName})}" th:object="${loan}">
++            <form role="form" method="post" th:action="@{/loan/{userName}/edit(userName=${userName}, loanId=${loan.getId()})}" th:object="${loan}">
+                 <div class="form-row">
++                    <div class="form-group input-group">
++                        <div class="input-group-prepend">
++                            <span class="input-group-text">Description</span>
++                        </div>
++                        <textarea th:field="*{description}" class="form-control" aria-label="With textarea"></textarea>
++                    </div>
+                     <div class="form-group col-md-6">
+                         <label for="amount">Amount</label>
+                         <input

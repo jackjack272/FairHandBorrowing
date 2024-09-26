@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+
+  <section layout:fragment="body" class="mx-auto my-5" style="width: 70vw; min-height: 70vh">
+      <div class="d-flex justify-content-between flex-row my-2">
+          <h4 class="fw-bolder">Loans</h4>
+          <a class="btn btn-primary" th:href="@{/loan/{userName}/new(userName=${user.getUserName()})}"><i class="fa fa-plus" aria-hidden="true"></i> | Create Loan</a>
+      </div>
+      <div th:if="${loans.isEmpty()}">NO AVAILABLE LOANS</div>
+
+      <table class="table table-striped table-hover" th:if="${!loans.isEmpty()}">
+          <thead class="table-dark">
+          <tr>
+              <th scope="col">Loan ID</th>
+              <th scope="col">Loan Status</th>
+              <th scope="col">Created On</th>
+              <th scope="col">Total Amount</th>
+              <th scope="col">Interest Rate</th>
+              <th scope="col">Description</th>
+              <th scope="col">Term (in Mos)</th>
+              <th scope="col">Collateral</th>
+              <th scope="col">Funding Status</th>
+              <th scope="col" style="min-width: 250px">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="loan : ${loans}">
+              <td th:text="${loan.getId()}"></td>
+              <td>
+<!--                  <span class="badge rounded-pill text-bg-secondary"-->
+<!--                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />-->
+                  <span th:if="${loan.getLoanStatus().getId() == 1}" class="badge rounded-pill text-bg-secondary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 2}" class="badge rounded-pill text-bg-warning"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 3}" class="badge rounded-pill text-bg-primary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 4}" class="badge rounded-pill text-bg-success"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 5}" class="badge rounded-pill text-bg-danger"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+              </td>
+              <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
+              <td th:text="${loan.getAmountBorrowed()}"></td>
+              <td th:text="${loan.getInterestRate()}"></td>
+              <td th:text="${loan.getDescription()}"></td>
+              <td th:text="${loan.getMonthsToPay()}"></td>
+              <td th:text="${loan.getCollateralIdStr()}"></td>
+              <td>
+                  <div class="progress">
+                      <div class="progress-bar" role="progressbar" th:style="${'width: ' + loan.getFundProgress() + '%;'}" aria-valuemin="0" aria-valuemax="100"
+                      th:text="${loan.getFundProgress() + '%'}"></div>
+                  </div>
+              </td>
+              <td>
+<!--                  // request funds-->
+                  <form class="d-inline" role="form" method="get"
+                        th:action="@{/funds/{userName}/{loanId}/request(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                      <button type="submit" th:class="'btn ' + ${loan.getFundProgress() >= 100 ? 'btn-secondary' : 'btn-success'}"
+                              th:disabled="${loan.getFundProgress() >= 100}">
+                          <i class="fas fa-magnifying-glass-dollar"></i>
+                      </button>
+                  </form>
+
+<!--                  // edit loan-->
+                  <form class="d-inline" role="form" method="get"
+                        th:action="@{/loan/{userName}/{loanId}/edit(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                      <button type="submit" th:class="'btn ' + ${loan.getFundProgress() > 0 ? 'btn-secondary' : 'btn-warning'}"
+                              th:disabled="${loan.getFundProgress() > 0}">
+                          <i class="fa fa-pencil"></i>
+                      </button>
+                  </form>
+
+<!--                  // archive loan-->
+                  <button th:disabled="${loan.getLoanStatus().getId() > 1}"
+                          type="button"
+                          th:class="'btn ' + ${loan.getLoanStatus().getStatusName() != 'NOT_STARTED' ? 'btn-secondary' : 'btn-danger'}"
+                          data-toggle="modal"
+                          data-target="#archiveLoanModal" th:attrappend="data-target=${loan.id}">
+                      <i class="fa fa-times"></i>
+                  </button>
+
+<!--                  // sign contract-->
+                  <button th:if="${loan.getLoanStatus().getId()  == 2} or
+                                    ${loan.getLoanStatus().getId()  == 3} or
+                                    ${loan.getLoanStatus().getId()  == 4}"
+                          type="button"
+                          class="btn btn-warning"
+                          data-toggle="modal"
+                          data-target="#signContractModal" th:attrappend="data-target=${loan.id}">
+                      <i class="fas fa-file-contract"></i>
+                  </button>
+
+<!--                  // pay loan-->
+                  <form class="d-inline" role="form" method="get"
+                        th:action="@{/payment/{userName}/{loanId}/schedule(loanId=${loan.getId()}, userName=${user.getUserName()})}">
+                      <button th:if="${loan.getLoanStatus().getId()  == 3}"
+                              type="submit"
+                              class="btn btn-success">
+                          <i class="fas fa-usd"></i>
+                      </button>
+                  </form>
+
+                  <div th:replace="~{fragments/archive_loan :: modal(loan=${loan}, user=${user})}"></div>
+                  <div th:if="${loan.getContract() != null}" th:replace="~{fragments/sign_contract :: modal(loan=${loan}, contract=${loan.getContract()}, user=${user})}"></div>
+              </td>
+          </tr>
+          </tbody>
+      </table>
+
+      <br>
+      <div class="d-flex justify-content-between flex-row my-2">
+          <h4 class="fw-bolder">Collaterals</h4>
+          <a class="btn btn-primary" th:href="@{/collateral/{userName}/new(userName=${user.getUserName()})}"><i class="fa fa-plus" aria-hidden="true"></i> | Create Collateral</a>
+      </div>
+      <div th:if="${collaterals.isEmpty()}">NO AVAILABLE COLLATERALS</div>
+      <table class="table table-striped table-hover" th:if="${!collaterals.isEmpty()}">
+          <thead class="table-dark">
+          <tr>
+              <th scope="col">Collateral ID</th>
+              <th scope="col">Item Name</th>
+              <th scope="col">Brand</th>
+              <th scope="col">Description</th>
+              <th scope="col">Item Condition</th>
+              <th scope="col">Market Value</th>
+              <th scope="col">Associated Loan ID</th>
+              <th scope="col">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="collateral : ${collaterals}">
+              <td th:text="${collateral.getId()}"></td>
+              <td th:text="${collateral.getItemName()}"></td>
+              <td th:text="${collateral.getBrand()}"></td>
+              <td th:text="${collateral.getDescription()}"></td>
+              <td th:text="${collateral.getItemCondition()}"></td>
+              <td th:text="${collateral.getMarketValue()}"></td>
+              <td th:text="${collateral.getLoan() != null} ? ${collateral.getLoan().getId()} : '-' "></td>
+              <td>
+                  <button th:disabled="${collateral.getLoan() != null}" type="button" th:class="'btn ' + ${collateral.getLoan() != null ? 'btn-secondary' : 'btn-danger'}" data-toggle="modal" data-target="#archiveCollateralModal" th:attrappend="data-target=${collateral.id}">
+                      <i class="fa fa-times"></i>
+                  </button>
+                  <div th:replace="~{fragments/delete_collateral :: modal(collateral=${collateral}, user=${user})}"/>
+              </td>
+          </tr>
+          </tbody>
+      </table>
+
+      <div class="d-flex justify-content-between flex-row my-2">
+          <h4 class="fw-bolder">Loans History</h4>
+      </div>
+      <div th:if="${loans_history.isEmpty()}">NO HISTORY</div>
+
+      <table class="table table-striped table-hover" th:if="${!loans_history.isEmpty()}">
+          <thead class="table-dark">
+          <tr>
+              <th scope="col">Loan ID</th>
+              <th scope="col">Loan Status</th>
+              <th scope="col">Created On</th>
+              <th scope="col">Total Amount</th>
+              <th scope="col">Interest Rate</th>
+              <th scope="col">Description</th>
+              <th scope="col">Term (in Mos)</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="loan : ${loans_history}">
+              <td th:text="${loan.getId()}"></td>
+              <td>
+                  <span th:if="${loan.getLoanStatus().getId() == 1}" class="badge rounded-pill text-bg-secondary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 2}" class="badge rounded-pill text-bg-warning"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 3}" class="badge rounded-pill text-bg-primary"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 4}" class="badge rounded-pill text-bg-success"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+                  <span th:if="${loan.getLoanStatus().getId() == 5}" class="badge rounded-pill text-bg-danger"
+                        th:text="${#strings.replace(loan.getLoanStatus().getStatusName(),'_',' ')}" />
+              </td>
+              <td th:text="${#dates.format(loan.getCreatedOn(), 'dd-MM-yyyy HH:mm')}"></td>
+              <td th:text="${loan.getAmountBorrowed()}"></td>
+              <td th:text="${loan.getInterestRate()}"></td>
+              <td th:text="${loan.getDescription()}"></td>
+              <td th:text="${loan.getMonthsToPay()}"></td>
+          </tr>
+          </tbody>
+      </table>
+  </section>
+</main>
+</body>
+</html>

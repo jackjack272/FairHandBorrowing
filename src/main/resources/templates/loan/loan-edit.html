@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+    <meta charset="UTF-8">
+    <title>Loan Edit</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <section layout:fragment="body" class="py-5">
+        <div class="container">
+            <form role="form" method="post" th:action="@{/loan/{userName}/edit(userName=${userName}, loanId=${loan.getId()})}" th:object="${loan}">
+                <div class="form-row">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Description</span>
+                        </div>
+                        <textarea th:field="*{description}" class="form-control" aria-label="With textarea"></textarea>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="amount">Amount</label>
+                        <input
+                                type="number"
+                                class="form-control"
+                                id="amount"
+                                name="amount"
+                                th:field="*{amountBorrowed}"
+                                placehold="Amount">
+                        <p th:if="${#fields.hasErrors('amountBorrowed')}" class="text-danger" th:errors="*{amountBorrowed}"></p>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="interest">Interest Rate</label>
+                        <input
+                                type="number"
+                                class="form-control"
+                                id="interest"
+                                name="interest"
+                                th:field="*{interestRate}"
+                                placehold="Interest">
+                        <p th:if="${#fields.hasErrors('interestRate')}" class="text-danger" th:errors="*{interestRate}"></p>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="months">Months to Pay</label>
+                        <input
+                                type="number"
+                                class="form-control"
+                                id="months"
+                                name="months"
+                                th:field="*{monthsToPay}"
+                                placehold="End Date">
+                        <p th:if="${#fields.hasErrors('monthsToPay')}" class="text-danger" th:errors="*{monthsToPay}"></p>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="col">Available Collaterals</label>
+                        <select
+                                class="form-control"
+                                id="col"
+                                name="collaterals"
+                                multiple="multiple">
+                            <option type="checkbox"
+                                    th:selected="${#lists.contains(loan.getCollaterals(), collateral)}"
+                                    th:each="collateral : ${allcollaterals}" th:value="${collateral.getId()}"
+                                    th:text="${collateral.getId() + ' ' + collateral.getItemName()}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

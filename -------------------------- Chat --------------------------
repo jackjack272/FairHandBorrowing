@@ -1,0 +1,20 @@
+-- leave your message here
+
+    -Cristi: 7/11: good day did x, y z,
+- cristi 7/18:  register cant make profiles due to id being needed to save the user, but after its saved dose it get and id...
+
+- Mia 7/18:
+    - User ID is auto generated as the model is using @GeneratedValue(strategy = GenerationType.SEQUENCE). if it using GenerationType.IDENTITY, then ID should be supplied
+    - Also I suggest the validation to be in controller , not in the service itself, so we can bounce it back to the Frontend and show it to the user easily compared to catching throws deeper in the calls.
+    - Implemented login and registration. Fixed the layouts
+    - TODO:
+        - registration error handling
+        - delete HeaderFooterComponents, DevComponents
+
+- Mia 7/19:
+    - Fixed issue for the login.
+    - Created home page for borrower
+    - Created models for Loans and Collaterals
+    - TODO:
+        - Add UI components in the borrower dashboard
+        - Add more CRUD for Loans and Collaterals

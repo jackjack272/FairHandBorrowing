@@ -1,0 +1,41 @@
+-- To Do list
+
+    //User
+        - Register
+        - log in
+        - log out
+
+        - profile
+        - money account
+
+    //Borrower Dashboard
+      - to view available collaterals
+      - to view active loans
+
+    //Lender Dashboard
+      - to display list of active lending
+
+
+
+    // Loan
+        - CRUD for
+            - loan - Create item related to loan
+            - COllateral list
+
+    // Chat
+        - websockets??
+
+    // Contract generation?
+
+    //how to simulate daily allowed applications to the lenders list (borrower POV)
+
+    // Admin dashboard
+
+
+Focus on making crud for all of these as step 1
+
+
+
+
+add any missed ones
+

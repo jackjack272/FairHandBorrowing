@@ -1,0 +1,60 @@
+<div th:fragment="modal (loan, contract, user)" th:if="${contract != null}">
+    <div class="modal fade" id="signContractModal" tabindex="-1" role="dialog" aria-hidden="true"
+         th:attrappend="id=${loan.id}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Sign Contract</h5>
+                    <button type="button" class="btn btn-close" data-dismiss="modal"></button>
+                </div>
+                <form role="form" method="post"
+                      th:action="@{/contract/{userName}/{loanId}/sign(userName=${user.getUserName()}, loanId=${loan.getId()})}">
+                    <div class="modal-body overflow-auto mb-4" style="height: 500px">
+                        <h5>Loan Agreement</h5>
+                        <p>This Peer-to-Peer Lending Agreement ("Agreement") is made and entered into as of <span class="fw-bold" th:text="${contract.getStartDate()}"></span>, by and between:</p>
+
+                        <p class="fw-bold">Borrower:</p>
+                        <p th:text="${contract.getBorrowerNameAddress()}"></p>
+
+                        <p class="fw-bold">Lender/s:</p>
+                        <div th:each="lenderNameAddress : ${contract.getLenderNameAddress()}">
+                            <p th:text="${lenderNameAddress}"></p>
+                        </div>
+                        <p class="fw-bold">Loan Details:</p>
+                        <div th:each="lenderFundAmount : ${contract.getLenderFundAmount()}">
+                            <p th:text="${lenderFundAmount}"></p>
+                        </div>
+                        <p th:text="'Interest Rate: ' + ${contract.getInterestRate()} + '%'"></p>
+                        <p th:text="'Loan Term: ' + ${contract.getTerm()} + ' months'"></p>
+                        <p th:text="'Repayment Schedule: The loan shall be repaid in ' + ${contract.getTerm()} + ' equal installments, due on the 1st of each month, starting the month after loan has started.'"></p>
+                        <p class="fw-bold">Terms and Conditions:</p>
+                        <p class="text-wrap">
+                            1. The Borrower shall use the loan amount solely for the purpose as stated in the loan description.<br>
+                            2. The Borrower shall repay the loan in accordance with the agreed-upon repayment schedule. Any late payments may incur additional charges as agreed by both parties.<br>
+                            3. The Lender agrees to lend the specified loan amount to the Borrower under the agreed-upon terms and interest rate.<br>
+                            4. The Borrower acknowledges their responsibility to repay the loan amount and interest to the Lender within the specified loan term.<br>
+                            5. This agreement may be amended or modified only in writing and signed by both parties.<br>
+                            6. Both parties agree that this agreement is not legally binding and is for educational and illustrative purposes only.<br>
+                            7. Any disputes arising from or related to this agreement shall be resolved through amicable discussions between both parties.<br>
+                        </p>
+                        <p class="fw-bold">Signatures:</p>
+                        <div th:each="cont : ${contract.getContracts()}">
+                            <span th:text="'@' + ${cont.getLoanFund().getLender().getUsername()}"></span>
+                            <span th:if="${cont.isLenderSigned()}" th:text="'signed' + ${cont.getLenderSignedDate()}"></span>
+                            <span th:if="${!cont.isLenderSigned()}" th:text="'not signed'"></span>
+                        </div>
+                        <div>
+                            <span th:text="'@' + ${contract.getContracts().get(0).getLoanFund().getBorrower().getUsername()}"></span>
+                            <span th:if="${contract.getContracts().get(0).isBorrowerSigned()}" th:text="'signed ' + ${contract.getContracts().get(0).getBorrowerSignedDate()}"></span>
+                            <span th:if="${!contract.getContracts().get(0).isBorrowerSigned()}" th:text="'not signed'"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer" th:if="${!contract.isSigned()}">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Sign Contract</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

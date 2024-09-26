@@ -1,0 +1,27 @@
+<div th:fragment="modal (loan, user, payment)">
+    <div class="modal fade" id="payLoanModal" tabindex="-1" role="dialog" aria-hidden="true"
+         th:attrappend="id=${payment.getPaymentId()}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Pay Loan</h5>
+                    <button type="button" class="btn btn-close" data-dismiss="modal" />
+                </div>
+                <div class="modal-body">
+                    <p th:text="'Do you wish to pay Loan ID=' + ${loan.id} + ' with the following payment details: '"></p>
+                    <p th:text="'Payment ID: ' + ${payment.getPaymentId()}"></p>
+                    <p th:text="'Due Date: ' + ${#dates.format(payment.getDueDate(), 'dd-MM-yyyy HH:mm')}"></p>
+                    <p th:text="'Total Amount Due: ' + ${#numbers.formatCurrency(payment.getTotalDue())} + '?'"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form role="form" method="post"
+                          style="display: inline"
+                          th:action="@{/payment/{userName}/{loanId}/{paymentId}/pay(userName=${user.getUsername()}, loanId=${loan.getId()}, paymentId=${payment.getPaymentId()})}">
+                        <button type="submit" class="btn btn-success">Yes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

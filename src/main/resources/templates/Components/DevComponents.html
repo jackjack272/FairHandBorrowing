@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+
+>
+
+<div th:fragment="dev-nav">
+  <p>implemt the following   </p>
+  <ul class="nav nav-pills">
+
+    <li class="nav-item">
+      <a class="nav-link ui-state-disabled " th:href="@{/loan}">A single loan  </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link ui-state-disabled" th:href="@{/collateral}">A single Collateral </a>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/}">Loan based on Categories</a>
+    </li>
+
+    <br />
+    <br />
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/register}">Registration page</a>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/profile}">User profile page</a>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/}">Money Page</a>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/}">Admin Page</a>
+    </li>
+
+
+
+  </ul>
+
+
+</div>
+
+
+
+
+
+
+
+
+</html>

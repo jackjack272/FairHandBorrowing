@@ -1,0 +1,24 @@
+<div th:fragment="modal (loan, user)">
+    <div class="modal fade" id="archiveLoanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+         th:attrappend="id=${loan.id}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Archive Loan?</h5>
+                    <button type="button" class="btn btn-close" data-dismiss="modal" />
+                </div>
+                <div class="modal-body">
+                    <p th:text="'You are about to archive loan ID=' + ${loan.getId()} + '. Proceed?'"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form role="form" method="post"
+                          style="display: inline"
+                          th:action="@{/loan/{userName}/archive(userName=${user.getUserName()}, loanId=${loan.getId()})}">
+                        <button type="submit" class="btn btn-danger">Yes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

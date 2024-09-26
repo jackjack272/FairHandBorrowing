@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>FHB-Profile</title>
+
+<style>
+    .boarderMe{
+        border-bottom-style: dashed;
+    }
+
+
+</style>
+
+</head>
+<section layout:fragment="body">
+<div th:insert="~{Components/HeaderFooterComponents:: header}"></div>
+
+<h1> Profile </h1>
+<br />
+<div class="offEdge">
+
+    <div class="profile-nav">
+        <button type="button" class="btn btn-secondary" th:onclick="">Edit Profile</button>
+        <button type="button" class="btn btn-secondary">Deal with Money</button>
+    </div>
+
+    <div th:replace="~{/Components/ProfileComponents ::top}"> </div>
+
+
+    <button type="button" class="btn btn-warning" th:onclick="">New Loan Form</button>
+</div>
+<br />
+<br />
+<br />
+
+
+<div>
+    <button type="button" class="btn btn-warning">Account History</button>
+
+    <div>
+        I am the history table
+    </div>
+
+</div>
+<br />
+<br />
+<br />
+
+
+<div>
+    the loans currently being paid off section
+
+</div>
+<br />
+<br />
+<br />
+
+<div>
+    Contract on time
+
+</div>
+
+<br />
+<br />
+<br />
+
+
+
+<div>
+    Contract on late
+</div>
+
+<div th:insert="~{Components/HeaderFooterComponents:: footer}"></div>
+</section>
+</html>

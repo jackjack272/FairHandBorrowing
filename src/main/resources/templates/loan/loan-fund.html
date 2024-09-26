@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+><head>
+    <meta charset="UTF-8">
+    <title>Loan Fund</title>
+</head>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <section layout:fragment="body" class="py-5">
+        <div class="container">
+
+            <div>
+                <label for="amount">Amount</label>
+                <a
+                    type="number"
+                    id="amount"
+                    th:text="${loan.getAmountBorrowed()}"
+                    placehold="Amount"></a>
+            </div>
+            <div>
+                <label for="interestRate">Interest Rate</label>
+                <a id="interestRate"
+                    type="number"
+                    th:text="${loan.getInterestRate()}"
+                    placehold="Interest Rate"></a>
+            </div>
+            <div>
+                <label for="monthsToPay">Months To Pay</label>
+                <a id="monthsToPay"
+                   type="number"
+                   th:text="${loan.getMonthsToPay()}"
+                   placehold="Months To Pay"></a>
+            </div>
+            <div>
+                <label for="collaterals">Collaterals</label>
+                <div id="collaterals" th:each="collateral : ${loan.getCollaterals()}">
+                    <a th:text="${collateral.getBrand() + ' ' +collateral.getItemName()}"></a>
+                </div>
+            </div>
+            <br>
+            <form role="form" method="post" th:action="@{/funds/{username}/{loanId}/request(username=${userName},loanId=${loan.getId()})}">
+                    <div class="form-group col-md-6">
+                        <label for="lenders">Available Lenders</label>
+                        <select
+                                class="form-control"
+                                id="lenders"
+                                name="lenderUsernames"
+                                multiple="multiple">
+                            <option type="checkbox"
+                                    th:each="lender : ${lenders}"
+                                    th:value="${lender.getUsername()}"
+                                    th:text="${lender.getUsername() + ' ' + lender.getLastName()}"></option>
+                        </select>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Request Fund</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

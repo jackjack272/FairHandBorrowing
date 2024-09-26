@@ -1,0 +1,27 @@
+We're using boot strap, copy and paste the code to make it nice
+
+https://getbootstrap.com/docs/5.3/forms/checks-radios/
+https://getbootstrap.com/docs/4.0/utilities/spacing/
+
+I cant figure out how to link css to imbeded folder like Loan/Collateral.html so
+    im using indocument styling
+
+    if some one can figure this one we can extract the indocument style.
+
+
+--Document Standard
+    Documents Start Wtih Capital Letter
+
+--variable Standard
+    were going to be using: camelCase
+
+
+to get me working need to have a user in DB with username user
+--------------------------------------------------
+How to Start the application:
+1. need to install MySQL.
+2. modify application.properties to use your local DB credentials
+3. Once intellij is setup (use this to setup your smart tomcat in local: https://www.youtube.com/watch?v=JIRDMGJ66SE)
+4. Once the application has started. Your db should be populated with empty tables. You need to insert the following rows to make the login and registration work properly.
+   4.a. Insert ADMIN and USER roles in "roles" table
+   4.b. Insert BORROWER and LENDER profile types in "profile_types" table

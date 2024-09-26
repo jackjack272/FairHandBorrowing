@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layout.html}"
+>
+<head>
+    <title>Register</title>
+</head>
+<section layout:fragment="body" class="bg-image body-bg-custom d-flex justify-content-center align-items-center">
+    <div class="main">
+        <div class="login-form glass-card">
+            <div th:if="${param.fail}" class="alert alert-danger">
+                Username or email already exists
+            </div>
+<!--            <div class="main d-flex justify-content-center my-5">-->
+            <form
+                th:object="${user}"
+                th:action="@{/register}"
+                method="post"
+                class="row needs-validation ml-4"  novalidate >
+
+                <div class="d-flex align-items-center mb-3 pb-1">
+                    <i class="fas fa-money-bill fa-3x me-2"></i>
+                    <span class="h1 fw-bold mb-0">fhb</span>
+                </div>
+
+                <h5 class="fw-normal mb-3" style="letter-spacing: 1px; color: #d5d5d5;">Register account</h5>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <label for="validationCustom01" class="form-label">First name</label>
+                            <input
+                                    th:field="*{firstName}"
+                                    th:value="${user.getFirstName() == null ? '': user.getFirstName()}"
+                                    type="text" class="form-control" id="validationCustom01" required>
+                            <div class="valid-feedback"></div>
+                        </div>
+
+                        <div class="col">
+                            <label for="validationCustom02" class="form-label">Last name</label>
+                            <input
+                                    th:field="*{lastName}"
+                                    th:value="${user.getLastName() == null ? '': user.getLastName()}"
+                                    type="text" class="form-control" id="validationCustom02" required>
+                            <div class="valid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="dob" class="form-label mt-2">Date of birth</label>
+                        <input
+                                th:field="*{dob}"
+                                th:value="${user.getDob() == null ? '': user.getDob()}"
+                                type="date" class="form-control" id="dob" required>
+                        <div class="valid-feedback"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label for="validationCustomUsername" class="form-label  mt-2">Username</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text" id="">@</span>
+                                <input
+                                        th:field="*{userName}"
+                                        th:value="${user.getUserName() == null ? '': user.getUserName()}"
+                                        type="text" class="form-control" id="validationCustomUsername" required>
+                                <div class="valid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <label for="floatingPassword" class="form-label  mt-2">Password</label>
+                            <input
+                                    th:field="*{password}"
+                                    type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+                            <div th:text="${failed}" class="valid-feedback" ></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="floatingInput" class="form-label mt-2">Email address</label>
+                        <input
+                                th:field="*{email}"
+                                th:value="${user.getEmail() == null ? '': user.getEmail()}"
+                                type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+                        <div th:text="${failed}" class="valid-feedback" ></div>
+                    </div>
+
+                    <label for="userTypeSelect" class="form-label mt-4">User Type</label>
+                    <div  th:each="profile : ${profileTypes}" id="userTypeSelect" class="form-check form-check-inline">
+                        <label th:for="${profile}" class="form-label" th:text="${profile}"></label>
+                        <input type="radio"
+                               class="form-check-input"
+                               th:field="*{profileType}"
+                               th:value="${profile}"
+                               required
+                        >
+                    </div>
+                    <div th:text="${failed}" class="valid-feedback" ></div>
+                    <div class="pt-1 mb-4 w-100">
+                        <button type="submit" class="btn btn-dark btn-lg btn-block w-100">Register</button>
+                    </div>
+                </div>
+            </form>
+            <script>
+                // Example starter JavaScript for disabling form submissions if there are invalid fields
+                (function() {
+                    'use strict';
+                    window.addEventListener('load', function() {
+                        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                        var forms = document.getElementsByClassName('needs-validation');
+                        // Loop over them and prevent submission
+                        var validation = Array.prototype.filter.call(forms, function(form) {
+                            form.addEventListener('submit', function(event) {
+                                if (form.checkValidity() === false) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                }
+                                form.classList.add('was-validated');
+                            }, false);
+                        });
+                    }, false);
+                })();
+            </script>
+<!--            </div>-->
+        </div>
+    </div>
+</section>
+</html>
